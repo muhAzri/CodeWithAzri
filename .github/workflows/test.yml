@@ -1,0 +1,35 @@
+name: Flutter Test Workflow
+
+on:
+  pull_request:
+    branches:
+      - '*'
+
+jobs:
+  flutter_tests:
+    name: Run Flutter Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Analyze the project's Dart code
+        run: flutter analyze
+
+      - name: Format the project's Dart code
+        run : dart format .
+
+      - name: Run tests
+        run: flutter test
+
+      - name: Run tests coverage
+        run: flutter test --coverage
