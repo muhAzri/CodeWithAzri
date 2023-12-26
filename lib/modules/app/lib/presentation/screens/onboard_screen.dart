@@ -12,16 +12,18 @@ class OnboardScreen extends StatelessWidget {
     return const Scaffold(
       backgroundColor: backgroundColor,
       body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            OnboardLogo(),
-            TagLine(),
-            Description(),
-            CreateNewAccountButton(),
-            GoToSignInButton(),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              OnboardLogo(),
+              TagLine(),
+              DescriptionSection(),
+              CreateNewAccountButton(),
+              GoToSignInButton(),
+            ],
+          ),
         ),
       ),
     );
@@ -84,8 +86,8 @@ class TagLine extends StatelessWidget {
   }
 }
 
-class Description extends StatelessWidget {
-  const Description({super.key});
+class DescriptionSection extends StatelessWidget {
+  const DescriptionSection({super.key});
 
   @override
   Widget build(BuildContext context) {
