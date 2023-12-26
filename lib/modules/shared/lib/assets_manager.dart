@@ -4,4 +4,5 @@ class AssetsManager {
 
   // Images Related
   static String logo = '$_baseImagePath/logo.png';
+  static String onboard = '$_baseImagePath/onboard.png';
 }
