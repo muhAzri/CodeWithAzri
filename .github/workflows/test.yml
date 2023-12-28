@@ -44,8 +44,7 @@ jobs:
 
       - name: Update README
         run: |
-          branch=$(echo "${GITHUB_REF#refs/heads/}")
-          sed -i "s/:branch/$branch/g" README.md
+          sed -i "s/:branch/${{ steps.branch_name.outputs.branch }}/g" README.md
 
       - name: Commit changes
         run: |
