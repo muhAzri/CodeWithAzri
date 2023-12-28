@@ -8,7 +8,6 @@ on:
 jobs:
   melos_flutter_tests:
     name: Run Melos Flutter Tests
-    if: "!github.actor.endsWith('[bot]')"
     runs-on: ubuntu-latest
 
     steps:
@@ -43,12 +42,19 @@ jobs:
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
-      - name: Update README Coverage Badge
+      - name: Update README
         run: |
           branch=$(echo "${GITHUB_REF#refs/heads/}")
           sed -i "s/:branch/$branch/g" README.md
 
-      - name: Commit Readme coverage
+      - name: Check commit message
+        run: |
+          if git log --format=%B -n 1 ${{ github.sha }} | grep -q '\[skip ci\]'; then
+            echo "Skipping workflow execution due to [skip ci] commit message."
+            exit 1
+          fi
+
+      - name: Commit changes
         run: |
           git config --global user.name 'GitHub Actions'
           git config --global user.email 'actions@users.noreply.github.com'
