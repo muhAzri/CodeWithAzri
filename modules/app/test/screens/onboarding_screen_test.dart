@@ -92,6 +92,10 @@ void main() {
       // Verify if CreateNewAccountButton widget is present
       expect(find.byType(CustomButton), findsOneWidget);
       expect(find.text('Create New Account'), findsOneWidget);
+
+      await tester.tap(find.byType(InkWell), warnIfMissed: false);
+      await tester.pumpAndSettle();
+      expect(find.text("Sign Up"), findsOneWidget);
     });
 
     testWidgets('GoToSignInButton widget test', (WidgetTester tester) async {
@@ -106,6 +110,26 @@ void main() {
       // Verify if GoToSignInButton widget is present
       expect(find.byType(CustomTextButton), findsOneWidget);
       expect(find.text('Sign In to My Account'), findsOneWidget);
+
+      await tester.tap(find.byType(InkWell), warnIfMissed: false);
+      await tester.pumpAndSettle();
+      expect(find.text("Sign In"), findsOneWidget);
+    });
+
+    testWidgets("OnboardScreen widget test", (WidgetTester tester) async {
+      await tester.pumpWidget(
+        const TestApp(
+          home: Material(
+            child: OnboardScreen(),
+          ),
+        ),
+      );
+
+      expect(find.byType(OnboardLogo), findsOneWidget);
+      expect(find.byType(TagLine), findsOneWidget);
+      expect(find.byType(DescriptionSection), findsOneWidget);
+      expect(find.byType(CreateNewAccountButton), findsOneWidget);
+      expect(find.byType(GoToSignInButton), findsOneWidget);
     });
   });
 }
@@ -121,7 +145,31 @@ class TestApp extends StatelessWidget {
       designSize: const Size(393, 847),
     );
     return MaterialApp(
-      home: home,
+      routes: {
+        '/': (_) => home,
+        '/sign-in': (_) => const MockRoutePage(
+              text: "Sign In",
+            ),
+        '/sign-up': (_) => const MockRoutePage(
+              text: "Sign Up",
+            ),
+      },
+    );
+  }
+}
+
+class MockRoutePage extends StatelessWidget {
+  final String text;
+  const MockRoutePage({super.key, required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Text(
+          text,
+        ),
+      ),
     );
   }
 }

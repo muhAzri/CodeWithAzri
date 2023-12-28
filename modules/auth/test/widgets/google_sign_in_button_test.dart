@@ -55,6 +55,20 @@ void main() {
           equals(const EdgeInsets.symmetric(horizontal: 10.0, vertical: 12.0)));
       expect(containerWidget.margin, equals(const EdgeInsets.all(20.0)));
     });
+
+    testWidgets('Widget onTap callback is triggered',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(
+        const TestApp(
+          home: Scaffold(
+            body: GoogleSignInButton(),
+          ),
+        ),
+      );
+
+      final inkWellFinder = find.byType(InkWell);
+      await tester.tap(inkWellFinder, warnIfMissed: false);
+    });
   });
 }
 
