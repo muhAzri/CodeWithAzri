@@ -1,5 +1,4 @@
 import 'package:app/app.dart';
-import 'package:auth/auth.dart';
 import 'package:shared/shared.dart';
 import 'package:flutter/material.dart';
 
@@ -16,15 +15,6 @@ class AppRouter {
 
               case AppRoutes.onboardScreen:
                 return const OnboardScreen();
-
-              case AppRoutes.signUpScreen:
-                return const SignUpScreen();
-
-              case AppRoutes.signInScreen:
-                return const SignInScreen();
-
-              case AppRoutes.forgotPasswordScreen:
-                return const ForgotPasswordScreen();
 
               default:
                 return const NamedRouteNotFound();
