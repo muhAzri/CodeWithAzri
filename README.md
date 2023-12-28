@@ -1,5 +1,7 @@
 ![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/muhAzri/CodeWithAzri?style=flat-square) 
 ![GitHub repo size](https://img.shields.io/github/repo-size/muhAzri/CodeWithAzri?style=flat-square)
+![Codecov](https://img.shields.io/codecov/c/github/MuhAzri/CodeWithAzri)
+
 
 # Code With Azri
 This endeavor is dedicated to offering a collection of full courses encompassing various subjects within the realm of technology, programming, and more. The primary goal is to make high-quality educational content easily accessible to anyone, completely free of charge.
