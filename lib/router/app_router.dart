@@ -23,9 +23,6 @@ class AppRouter {
               case AppRoutes.signInScreen:
                 return const SignInScreen();
 
-              case AppRoutes.forgotPasswordScreen:
-                return const ForgotPasswordScreen();
-
               default:
                 return const NamedRouteNotFound();
             }

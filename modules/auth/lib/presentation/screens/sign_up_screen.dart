@@ -1,8 +1,5 @@
 import 'package:app/app.dart';
-import 'package:auth/presentation/widgets/apple_sign_in_button.dart';
-import 'package:auth/presentation/widgets/google_sign_in_button.dart';
-import 'package:auth/presentation/widgets/or_divider_widget.dart';
-import 'package:flutter/foundation.dart';
+import 'package:auth/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shared/assets_manager.dart';
@@ -161,23 +158,6 @@ class BuildHaveAccountButton extends StatelessWidget {
           )
         ],
       ),
-    );
-  }
-}
-
-class OAuthSignInButton extends StatelessWidget {
-  const OAuthSignInButton({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    if (defaultTargetPlatform == TargetPlatform.iOS) {
-      return AppleSignInButton(
-        padding: EdgeInsets.only(top: 30.h),
-      );
-    }
-
-    return GoogleSignInButton(
-      padding: EdgeInsets.only(top: 30.h),
     );
   }
 }

@@ -1,6 +1,5 @@
 import 'package:app/app.dart';
 import 'package:auth/auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -39,30 +38,6 @@ void main() {
       );
       expect(find.text('Already have an account? '), findsOneWidget);
       expect(find.text('Sign In'), findsOneWidget);
-    });
-
-    testWidgets('OAuthSignInButton Widget Test - iOS',
-        (WidgetTester tester) async {
-      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
-
-      await tester.pumpWidget(
-          const TestApp(home: Material(child: OAuthSignInButton())));
-      expect(find.byType(AppleSignInButton), findsOneWidget);
-      expect(find.byType(GoogleSignInButton), findsNothing);
-
-      debugDefaultTargetPlatformOverride = null;
-    });
-
-    testWidgets('OAuthSignInButton Widget Test - Android',
-        (WidgetTester tester) async {
-      debugDefaultTargetPlatformOverride = TargetPlatform.android;
-
-      await tester.pumpWidget(
-          const TestApp(home: Material(child: OAuthSignInButton())));
-      expect(find.byType(GoogleSignInButton), findsOneWidget);
-      expect(find.byType(AppleSignInButton), findsNothing);
-
-      debugDefaultTargetPlatformOverride = null;
     });
 
     testWidgets('OrDividerWidget Widget Test', (WidgetTester tester) async {
