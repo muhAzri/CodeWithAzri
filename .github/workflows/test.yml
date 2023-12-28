@@ -32,6 +32,12 @@ jobs:
 
       - name: Run tests
         run: flutter pub global run melos test
+        
       - name: Run tests coverage
         run: |
           flutter pub global run melos test-coverage
+
+      - name: Upload coverage reports to Codecov
+          uses: codecov/codecov-action@v4
+          env:
+            CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
