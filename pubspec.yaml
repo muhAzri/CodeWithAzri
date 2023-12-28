@@ -29,18 +29,21 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   app:
-    path: lib/modules/app/
+    path: modules/app/
+  auth:
+   path: modules/auth/
   cupertino_icons: ^1.0.2
   flutter:
     sdk: flutter
   flutter_screenutil: ^5.9.0
   shared:
-    path: lib/modules/shared/
+    path: modules/shared/
 
 dev_dependencies:
   flutter_lints: ^2.0.0
   flutter_test:
     sdk: flutter
+  melos: ^3.4.0
   mocktail: ^1.0.2
 
 # For information on the generic Dart part of this file, see the
@@ -54,8 +57,9 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  assets:
-    - assets/images/
+  # assets:
+  #   - assets/images/
+  #   - assets/icons/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
   # For details regarding adding assets from package dependencies, see
