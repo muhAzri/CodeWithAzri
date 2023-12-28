@@ -14,11 +14,9 @@ void main() {
         ),
       );
 
-      // Verify if OnboardLogo widget is present
       expect(find.byType(Container), findsOneWidget);
       expect(find.byType(Image), findsOneWidget);
 
-      // Add more specific tests for the OnboardLogo widget
       expect(
           find.descendant(
               of: find.byType(Container), matching: find.byType(Padding)),

@@ -48,6 +48,7 @@ class CustomTextFormField extends StatelessWidget {
         width: 24.w,
         height: 24.h,
         color: grayColor,
+        package: 'shared',
       ),
     );
   }

@@ -17,6 +17,7 @@ class AppleSignInButton extends StatelessWidget {
         child: Image.asset(
           AssetsManager.loginApple,
           width: 342.w,
+          package: 'shared',
         ),
       ),
     );

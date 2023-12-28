@@ -34,6 +34,7 @@ class _SplashScreenState extends State<SplashScreen> {
           AssetsManager.logo,
           width: 256.w,
           height: 256.h,
+          package: 'shared',
         ),
       ),
     );

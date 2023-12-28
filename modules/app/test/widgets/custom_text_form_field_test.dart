@@ -2,6 +2,7 @@ import 'package:app/app.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared/shared.dart';
 
 void main() {
   group('CustomTextFormField tests', () {
@@ -86,7 +87,7 @@ class CustomTextFormTestWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomTextFormField(
-      prefixIconsAssets: '../../assets/icons/email.png',
+      prefixIconsAssets: AssetsManager.emailIcon,
       hintText: 'Enter your text here',
       controller: controller,
       obscureText: isObscured,

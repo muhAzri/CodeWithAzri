@@ -43,6 +43,7 @@ class BuildSignInHeader extends StatelessWidget {
               AssetsManager.logo,
               width: 64.w,
               height: 64.h,
+              package: 'shared',
             ),
             SizedBox(
               height: 17.h,

@@ -41,6 +41,7 @@ class OnboardLogo extends StatelessWidget {
         AssetsManager.onboard,
         width: 342.w,
         height: 280.h,
+        package: 'shared',
       ),
     );
   }

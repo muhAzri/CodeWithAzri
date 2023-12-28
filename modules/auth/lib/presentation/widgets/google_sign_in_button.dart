@@ -17,6 +17,7 @@ class GoogleSignInButton extends StatelessWidget {
         child: Image.asset(
           AssetsManager.loginGoogle,
           width: 274.w,
+          package: 'shared',
         ),
       ),
     );
