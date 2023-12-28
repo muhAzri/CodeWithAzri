@@ -8,6 +8,7 @@ on:
 jobs:
   melos_flutter_tests:
     name: Run Melos Flutter Tests
+    if: "!github.actor.endsWith('[bot]')"
     runs-on: ubuntu-latest
 
     steps:
@@ -41,3 +42,15 @@ jobs:
         uses: codecov/codecov-action@v4-beta
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Update README Coverage Badge
+        run: |
+          branch=$(echo "${GITHUB_REF#refs/heads/}")
+          sed -i "s/:branch/$branch/g" README.md
+
+      - name: Commit Readme coverage
+        run: |
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'actions@users.noreply.github.com'
+          git commit -am "Update branch name in README [skip ci]"
+          git push
