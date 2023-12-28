@@ -1,6 +1,6 @@
 ![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/muhAzri/CodeWithAzri?style=flat-square) 
 ![GitHub repo size](https://img.shields.io/github/repo-size/muhAzri/CodeWithAzri?style=flat-square)
-![Codecov branch](https://img.shields.io/codecov/c/github/muhAzri/CodeWithAzri/:branch)
+![Codecov](https://img.shields.io/codecov/c/github/MuhAzri/CodeWithAzri)
 
 
 # Code With Azri
