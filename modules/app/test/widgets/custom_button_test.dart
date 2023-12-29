@@ -23,7 +23,7 @@ void main() {
         home: Material(
           child: CustomButton(
             label: label,
-            onTap: mockOnTap,
+            onTap: mockOnTap.call,
           ),
         ),
       ));
@@ -39,7 +39,7 @@ void main() {
         home: Material(
           child: CustomButton(
             label: 'Button',
-            onTap: mockOnTap,
+            onTap: mockOnTap.call,
           ),
         ),
       ));
@@ -64,7 +64,7 @@ void main() {
               body: CustomButton(
                 key: customButtonKey,
                 label: 'Button',
-                onTap: mockOnTap,
+                onTap: mockOnTap.call,
                 height: customHeight,
                 width: customWidth,
               ),
@@ -87,7 +87,7 @@ void main() {
         home: Material(
           child: CustomButton(
             label: 'Button',
-            onTap: mockOnTap,
+            onTap: mockOnTap.call,
             padding: customPadding,
           ),
         ),
@@ -113,7 +113,7 @@ void main() {
         home: Material(
           child: CustomButton(
             label: 'Button',
-            onTap: mockOnTap,
+            onTap: mockOnTap.call,
           ),
         ),
       ));
