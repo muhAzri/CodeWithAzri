@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shared/shared.dart';
@@ -95,7 +96,7 @@ class DescriptionSection extends StatelessWidget {
     return Container(
       padding: EdgeInsets.only(top: 40.h, left: 24.w, right: 24.w),
       child: Text(
-        "New way to study abroad from the real professional with great work.",
+        "onboardDescription".tr(),
         style: grayTextStyle.copyWith(
           fontSize: 16.sp,
         ),
@@ -110,7 +111,7 @@ class CreateNewAccountButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomButton(
-      label: 'Create New Account',
+      label: 'onboardCreateAccountButtonLabel'.tr(),
       onTap: () {
         Navigator.pushNamed(context, AppRoutes.signUpScreen);
       },
@@ -131,7 +132,7 @@ class GoToSignInButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: CustomTextButton(
-        label: 'Sign In to My Account',
+        label: 'onboardGoToSignInButtonLabel'.tr(),
         onTap: () {
           Navigator.pushNamed(context, AppRoutes.signInScreen);
         },

@@ -1,6 +1,5 @@
 import 'package:app/app.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared/shared.dart';
 
@@ -10,19 +9,28 @@ void main() {
       bool isObscured = false;
 
       await tester.pumpWidget(
-        TestApp(
-          home: Scaffold(
-            body: CustomTextFormTestWidget(
-              (value) {
-                isObscured = value;
-              },
-              isObscured: isObscured,
-            ),
-          ),
+        LocalizationTestApp(
+          child: Builder(builder: (context) {
+            return Scaffold(
+              body: CustomTextFormTestWidget(
+                (value) {
+                  isObscured = value;
+                },
+                isObscured: isObscured,
+              ),
+            );
+          }),
         ),
       );
 
       await tester.pumpAndSettle();
+
+      final errorLocalizationWidget =
+          find.textContaining("Error Localization:");
+
+      if (errorLocalizationWidget.evaluate().isNotEmpty) {
+        debugDumpApp();
+      }
 
       expect(find.byType(TextFormField), findsOneWidget);
       expect(find.byType(Icon), findsOneWidget);
@@ -33,8 +41,8 @@ void main() {
       bool isObscured = false;
 
       await tester.pumpWidget(
-        TestApp(
-          home: Scaffold(
+        LocalizationTestApp(
+          child: Scaffold(
             body: CustomTextFormTestWidget(
               (value) {
                 isObscured = value;
@@ -57,8 +65,8 @@ void main() {
     testWidgets('Enter text in TextFormField test',
         (WidgetTester tester) async {
       await tester.pumpWidget(
-        TestApp(
-          home: Scaffold(
+        LocalizationTestApp(
+          child: Scaffold(
             body: CustomTextFormTestWidget(
               (value) {},
               isObscured: false,
@@ -94,22 +102,6 @@ class CustomTextFormTestWidget extends StatelessWidget {
       onSuffixTapped: () {
         toggleObscure(!isObscured);
       },
-    );
-  }
-}
-
-class TestApp extends StatelessWidget {
-  final Widget home;
-  const TestApp({super.key, required this.home});
-
-  @override
-  Widget build(BuildContext context) {
-    ScreenUtil.init(
-      context,
-      designSize: const Size(393, 847),
-    );
-    return MaterialApp(
-      home: home,
     );
   }
 }

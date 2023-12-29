@@ -1,5 +1,6 @@
 import 'package:app/app.dart';
 import 'package:auth/auth.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shared/shared.dart';
@@ -56,7 +57,7 @@ class BuildSignInHeader extends StatelessWidget {
               height: 17.h,
             ),
             Text(
-              "Welcome Back!",
+              "signInWelcomeMessage".tr(),
               style: whiteTextStyle.copyWith(
                 fontSize: 22.sp,
               ),
@@ -65,7 +66,7 @@ class BuildSignInHeader extends StatelessWidget {
               height: 4.h,
             ),
             Text(
-              "Sign In to your account",
+              'signInSubtitle'.tr(),
               style: grayTextStyle.copyWith(
                 fontSize: 18.sp,
               ),
@@ -104,11 +105,11 @@ class _BuildSignInFormsState extends State<BuildSignInForms> {
         children: [
           CustomTextFormField(
             prefixIconsAssets: AssetsManager.emailIcon,
-            hintText: "Type Your Email",
+            hintText: "emailHintText".tr(),
           ),
           CustomTextFormField(
             prefixIconsAssets: AssetsManager.lockIcon,
-            hintText: "Type Your Password",
+            hintText: "passwordHintText".tr(),
             obscureText: isObsecured,
             onSuffixTapped: _toggleObscureText,
           ),
@@ -116,7 +117,7 @@ class _BuildSignInFormsState extends State<BuildSignInForms> {
             height: 16.h,
           ),
           CustomTextButton(
-            label: "Forgot Password",
+            label: "forgotPasswordText".tr(),
             onTap: () {},
           )
         ],
@@ -133,7 +134,7 @@ class BuildSignInButton extends StatelessWidget {
     return Container(
       padding: EdgeInsets.only(top: 54.h),
       child: CustomButton(
-        label: "Sign In",
+        label: "signInButtonLabel".tr(),
         onTap: () {},
       ),
     );
@@ -151,12 +152,14 @@ class BuildCreateAccountButton extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            "Dont have account? ",
+            "dontHaveAnAccountText".tr(),
             style: grayTextStyle,
           ),
           CustomTextButton(
-            label: "Sign Up",
-            onTap: () {},
+            label: "signUpButtonLabel".tr(),
+            onTap: () {
+              Navigator.pushReplacementNamed(context, AppRoutes.signUpScreen);
+            },
             labelTextStyle: whiteTextStyle,
           )
         ],

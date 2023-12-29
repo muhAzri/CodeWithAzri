@@ -1,15 +1,23 @@
 import 'package:app/app.dart';
 import 'package:auth/auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared/shared.dart';
 
 void main() {
   group('SignInScreen Widgets Test', () {
     testWidgets('BuildSignInHeader Widget Test', (WidgetTester tester) async {
-      await tester.pumpWidget(const TestApp(home: BuildSignInHeader()));
-      expect(find.text('Welcome Back!'), findsOneWidget);
-      expect(find.text('Sign In to your account'), findsOneWidget);
+      await tester.pumpWidget(
+        const LocalizationTestApp(
+          child: BuildSignInHeader(),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      expect(find.text('signInWelcomeMessage'), findsOneWidget);
+      expect(find.text('signInSubtitle'), findsOneWidget);
     });
 
     testWidgets('BuildSignInForms Widget Test', (WidgetTester tester) async {
@@ -20,6 +28,7 @@ void main() {
           ),
         ),
       );
+
       expect(
         find.byType(CustomTextFormField),
         findsNWidgets(2),
@@ -29,13 +38,16 @@ void main() {
 
     testWidgets('BuildSignInButton Widget Test', (WidgetTester tester) async {
       await tester.pumpWidget(
-        const TestApp(
-          home: Material(
+        const LocalizationTestApp(
+          child: Material(
             child: BuildSignInButton(),
           ),
         ),
       );
-      expect(find.text('Sign In'), findsOneWidget);
+
+      await tester.pumpAndSettle();
+
+      expect(find.text('signInButtonLabel'), findsOneWidget);
     });
 
     testWidgets('BuildCreateAccountButton Widget Test',
@@ -50,8 +62,8 @@ void main() {
           ),
         ),
       );
-      expect(find.text('Dont have account? '), findsOneWidget);
-      expect(find.text('Sign Up'), findsOneWidget);
+      expect(find.text('dontHaveAnAccountText'), findsOneWidget);
+      expect(find.text('signUpButtonLabel'), findsOneWidget);
     });
 
     testWidgets('SignInScreen Widget Test', (WidgetTester tester) async {
@@ -59,7 +71,6 @@ void main() {
         const MaterialApp(
           home: Material(
             child: MediaQuery(
-              // Shrink the text avoid overflow caused by large Ahem font.
               data: MediaQueryData(textScaler: TextScaler.linear(0.5)),
               child: SignInScreen(),
             ),
@@ -70,20 +81,4 @@ void main() {
       expect(find.byType(SingleChildScrollView), findsOneWidget);
     });
   });
-}
-
-class TestApp extends StatelessWidget {
-  final Widget home;
-  const TestApp({super.key, required this.home});
-
-  @override
-  Widget build(BuildContext context) {
-    ScreenUtil.init(
-      context,
-      designSize: const Size(393, 847),
-    );
-    return MaterialApp(
-      home: home,
-    );
-  }
 }
