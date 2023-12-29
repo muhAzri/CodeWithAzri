@@ -17,9 +17,29 @@ void main() {
     });
 
     testWidgets('BuildSignUpForms Widget Test', (WidgetTester tester) async {
+      bool initialObscureText = true;
+
       await tester
           .pumpWidget(const TestApp(home: Material(child: BuildSignUpForms())));
       expect(find.byType(CustomTextFormField), findsNWidgets(3));
+
+      final signUpFormsState = tester.state<BuildSignUpFormsState>(
+        find.byType(BuildSignUpForms),
+      );
+
+      expect(signUpFormsState.isObsecured, initialObscureText);
+
+      await tester.tap(
+          find.descendant(
+            of: find.byType(CustomTextFormField),
+            matching: find.byType(InkWell),
+          ),
+          warnIfMissed: false);
+
+      await tester.pump();
+      await tester.pump();
+
+      expect(signUpFormsState.isObsecured, !initialObscureText);
     });
 
     testWidgets('BuildSignUpButton Widget Test', (WidgetTester tester) async {

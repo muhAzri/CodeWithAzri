@@ -82,10 +82,10 @@ class BuildSignInForms extends StatefulWidget {
   const BuildSignInForms({super.key});
 
   @override
-  State<BuildSignInForms> createState() => _BuildSignInFormsState();
+  State<BuildSignInForms> createState() => BuildSignInFormsState();
 }
 
-class _BuildSignInFormsState extends State<BuildSignInForms> {
+class BuildSignInFormsState extends State<BuildSignInForms> {
   bool isObsecured = true;
 
   void _toggleObscureText() {

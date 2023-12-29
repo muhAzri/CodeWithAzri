@@ -21,6 +21,8 @@ void main() {
     });
 
     testWidgets('BuildSignInForms Widget Test', (WidgetTester tester) async {
+      bool initialObscureText = true;
+
       await tester.pumpWidget(
         const TestApp(
           home: Material(
@@ -34,6 +36,24 @@ void main() {
         findsNWidgets(2),
       );
       expect(find.byType(CustomTextButton), findsOneWidget);
+
+      final signInFormsState = tester.state<BuildSignInFormsState>(
+        find.byType(BuildSignInForms),
+      );
+
+      expect(signInFormsState.isObsecured, initialObscureText);
+
+      await tester.tap(
+          find.descendant(
+            of: find.byType(CustomTextFormField),
+            matching: find.byType(InkWell),
+          ),
+          warnIfMissed: false);
+
+      await tester.pump();
+      await tester.pump();
+
+      expect(signInFormsState.isObsecured, !initialObscureText);
     });
 
     testWidgets('BuildSignInButton Widget Test', (WidgetTester tester) async {
