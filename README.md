@@ -2,16 +2,26 @@
 ![GitHub repo size](https://img.shields.io/github/repo-size/muhAzri/CodeWithAzri?style=flat-square)
 ![Codecov](https://img.shields.io/codecov/c/github/MuhAzri/CodeWithAzri)
 
+# Code With Azri - Learn, Explore, Create!
 
-# Code With Azri
-This endeavor is dedicated to offering a collection of full courses encompassing various subjects within the realm of technology, programming, and more. The primary goal is to make high-quality educational content easily accessible to anyone, completely free of charge.
+Welcome to Code With Azri, where the world of technology and learning converge! 🚀
 
-## What Sets Us Apart
-- Comprehensive Content: Our platform hosts a diverse range of courses meticulously crafted to cater to different learning levels and interests.
-- Accessible Learning: The courses are designed to be user-friendly, ensuring easy navigation and comprehension for learners of all backgrounds.
-- Continuous Updates: The project is continuously evolving, with regular updates and new content releases to keep pace with the latest advancements in technology and learning methodologies.
+## About Us
+Code With Azri is a vibrant hub brimming with an extensive array of courses covering diverse topics in technology, programming, and more. Our mission? To deliver top-notch educational content that's accessible to everyone, absolutely free of charge.
+
+## Discover the Possibilities
+🌍 **Language Support:** This Flutter app supports a myriad of languages including English, Indonesian, German, and Japanese. Navigate and engage with our content in the language that suits you best!
+
+📚 **Course Availability:** While our app supports multiple languages, please note that our meticulously crafted courses are currently available exclusively in English and Indonesian.
+
+## What Makes Us Stand Out
+- **Comprehensive Learning:** Dive into our comprehensive courses tailored for various skill levels and interests.
+- **User-Friendly Interface:** Enjoy seamless navigation and intuitive learning experiences suitable for learners of all backgrounds.
+- **Continuous Evolution:** Stay ahead with us! We're committed to regularly updating our content, keeping you abreast of the latest technological advancements and learning methodologies.
 
 ## Our Vision
-At Code With Azri, we believe in democratizing education by breaking barriers to learning. Our vision is to empower individuals globally with the knowledge and skills necessary to thrive in the digital era.
+At Code With Azri, our vision is simple yet powerful: to democratize education globally. We strive to empower individuals worldwide with the knowledge and skills essential to thrive in today's digital landscape.
 
-Join us on this exciting journey of learning and exploration at Code With Azri, where education knows no bounds.
+Embark on an exciting journey of learning and exploration with us at Code With Azri. Here, education knows no boundaries!
+
+Let's learn, explore, and create together! 🌟

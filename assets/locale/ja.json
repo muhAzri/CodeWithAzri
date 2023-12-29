@@ -1,0 +1,17 @@
+{
+    "onboardDescription": "素晴らしい仕事をするプロフェッショナルから学ぶ新しい方法。",
+    "onboardCreateAccountButtonLabel": "新しいアカウントを作成",
+    "onboardGoToSignInButtonLabel": "アカウントにサインイン",
+    "signInWelcomeMessage": "お帰りなさい！",
+    "signInSubtitle": "アカウントにサインイン",
+    "dontHaveAnAccountText": "アカウントをお持ちでないですか？ ",
+    "nameHintText": "お名前を入力してください",
+    "emailHintText": "メールアドレスを入力してください",
+    "passwordHintText": "パスワードを入力してください",
+    "forgotPasswordText": "パスワードをお忘れですか",
+    "signInButtonLabel": "サインイン",
+    "signUpButtonLabel": "サインアップ",
+    "signUpWelcomeMessage": "こんにちは Fam 👋",
+    "signUpSubtitle": "アカウントを作成してお楽しみください",
+    "alreadyHaveAnAccountText": "すでにアカウントをお持ちですか？ "
+}

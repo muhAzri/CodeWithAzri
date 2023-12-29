@@ -1,34 +1,60 @@
 import 'package:app/app.dart';
 import 'package:auth/auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared/shared.dart';
 
 void main() {
   group('SignUpScreen Widgets Test', () {
     testWidgets('BuildSignUpHeader Widget Test', (WidgetTester tester) async {
-      await tester.pumpWidget(const TestApp(home: BuildSignUpHeader()));
-      expect(find.text('Hello Fam 👋'), findsOneWidget);
-      expect(find.text('Create your account & enjoy'), findsOneWidget);
+      await tester
+          .pumpWidget(const LocalizationTestApp(child: BuildSignUpHeader()));
+
+      await tester.pumpAndSettle();
+
+      expect(find.text('signUpWelcomeMessage'), findsOneWidget);
+      expect(find.text('signUpSubtitle'), findsOneWidget);
     });
 
     testWidgets('BuildSignUpForms Widget Test', (WidgetTester tester) async {
+      bool initialObscureText = true;
+
       await tester
           .pumpWidget(const TestApp(home: Material(child: BuildSignUpForms())));
       expect(find.byType(CustomTextFormField), findsNWidgets(3));
+
+      final signUpFormsState = tester.state<BuildSignUpFormsState>(
+        find.byType(BuildSignUpForms),
+      );
+
+      expect(signUpFormsState.isObsecured, initialObscureText);
+
+      await tester.tap(
+          find.descendant(
+            of: find.byType(CustomTextFormField),
+            matching: find.byType(InkWell),
+          ),
+          warnIfMissed: false);
+
+      await tester.pump();
+      await tester.pump();
+
+      expect(signUpFormsState.isObsecured, !initialObscureText);
     });
 
     testWidgets('BuildSignUpButton Widget Test', (WidgetTester tester) async {
-      await tester.pumpWidget(
-          const TestApp(home: Material(child: BuildSignUpButton())));
-      expect(find.text('Sign Up'), findsOneWidget);
+      await tester.pumpWidget(const LocalizationTestApp(
+          child: Material(child: BuildSignUpButton())));
+      await tester.pumpAndSettle();
+
+      expect(find.text('signUpButtonLabel'), findsOneWidget);
     });
 
     testWidgets('BuildHaveAccountButton Widget Test',
         (WidgetTester tester) async {
       await tester.pumpWidget(
-        const TestApp(
-          home: Material(
+        const LocalizationTestApp(
+          child: Material(
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: BuildHaveAccountButton(),
@@ -36,8 +62,11 @@ void main() {
           ),
         ),
       );
-      expect(find.text('Already have an account? '), findsOneWidget);
-      expect(find.text('Sign In'), findsOneWidget);
+
+      await tester.pumpAndSettle();
+
+      expect(find.text('alreadyHaveAnAccountText'), findsOneWidget);
+      expect(find.text('signInButtonLabel'), findsOneWidget);
     });
 
     testWidgets('OrDividerWidget Widget Test', (WidgetTester tester) async {
@@ -61,20 +90,4 @@ void main() {
       expect(find.byType(SingleChildScrollView), findsOneWidget);
     });
   });
-}
-
-class TestApp extends StatelessWidget {
-  final Widget home;
-  const TestApp({super.key, required this.home});
-
-  @override
-  Widget build(BuildContext context) {
-    ScreenUtil.init(
-      context,
-      designSize: const Size(393, 847),
-    );
-    return MaterialApp(
-      home: home,
-    );
-  }
 }

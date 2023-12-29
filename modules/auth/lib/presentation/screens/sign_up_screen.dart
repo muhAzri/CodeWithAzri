@@ -1,7 +1,9 @@
 import 'package:app/app.dart';
 import 'package:auth/auth.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:shared/app_routes.dart';
 import 'package:shared/assets_manager.dart';
 import 'package:shared/styles.dart';
 
@@ -57,7 +59,7 @@ class BuildSignUpHeader extends StatelessWidget {
               height: 17.h,
             ),
             Text(
-              "Hello Fam 👋",
+              "signUpWelcomeMessage".tr(),
               style: whiteTextStyle.copyWith(
                 fontSize: 22.sp,
               ),
@@ -66,7 +68,7 @@ class BuildSignUpHeader extends StatelessWidget {
               height: 4.h,
             ),
             Text(
-              "Create your account & enjoy",
+              "signUpSubtitle".tr(),
               style: grayTextStyle.copyWith(
                 fontSize: 18.sp,
               ),
@@ -82,10 +84,10 @@ class BuildSignUpForms extends StatefulWidget {
   const BuildSignUpForms({super.key});
 
   @override
-  State<BuildSignUpForms> createState() => _BuildSignUpFormsState();
+  State<BuildSignUpForms> createState() => BuildSignUpFormsState();
 }
 
-class _BuildSignUpFormsState extends State<BuildSignUpForms> {
+class BuildSignUpFormsState extends State<BuildSignUpForms> {
   bool isObsecured = true;
 
   void _toggleObscureText() {
@@ -104,15 +106,15 @@ class _BuildSignUpFormsState extends State<BuildSignUpForms> {
         children: [
           CustomTextFormField(
             prefixIconsAssets: AssetsManager.personIcon,
-            hintText: "Type Your Name",
+            hintText: "nameHintText".tr(),
           ),
           CustomTextFormField(
             prefixIconsAssets: AssetsManager.emailIcon,
-            hintText: "Type Your Email",
+            hintText: "emailHintText".tr(),
           ),
           CustomTextFormField(
             prefixIconsAssets: AssetsManager.lockIcon,
-            hintText: "Type Your Password",
+            hintText: "passwordHintText".tr(),
             obscureText: isObsecured,
             onSuffixTapped: _toggleObscureText,
           ),
@@ -130,7 +132,7 @@ class BuildSignUpButton extends StatelessWidget {
     return Container(
       padding: EdgeInsets.only(top: 54.h),
       child: CustomButton(
-        label: "Sign Up",
+        label: "signUpButtonLabel".tr(),
         onTap: () {},
       ),
     );
@@ -148,12 +150,14 @@ class BuildHaveAccountButton extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            "Already have an account? ",
+            "alreadyHaveAnAccountText".tr(),
             style: grayTextStyle,
           ),
           CustomTextButton(
-            label: "Sign In",
-            onTap: () {},
+            label: "signInButtonLabel".tr(),
+            onTap: () {
+              Navigator.pushReplacementNamed(context, AppRoutes.signInScreen);
+            },
             labelTextStyle: whiteTextStyle,
           )
         ],

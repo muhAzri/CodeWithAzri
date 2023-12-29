@@ -1,8 +1,8 @@
 import 'package:app/app.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:shared/shared.dart';
 
 class MockVoidCallback extends Mock {
   void call();
@@ -94,20 +94,4 @@ void main() {
       );
     });
   });
-}
-
-class TestApp extends StatelessWidget {
-  final Widget home;
-  const TestApp({super.key, required this.home});
-
-  @override
-  Widget build(BuildContext context) {
-    ScreenUtil.init(
-      context,
-      designSize: const Size(393, 847),
-    );
-    return MaterialApp(
-      home: home,
-    );
-  }
 }

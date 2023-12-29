@@ -1,18 +1,20 @@
 import 'package:app/app.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared/shared.dart';
 
 void main() {
   group('Widget Tests', () {
     testWidgets('OnboardLogo widget test', (WidgetTester tester) async {
       await tester.pumpWidget(
-        const TestApp(
+        const LocalTestApp(
           home: Material(
             child: OnboardLogo(),
           ),
         ),
       );
+
+      await tester.pumpAndSettle();
 
       expect(find.byType(Container), findsOneWidget);
       expect(find.byType(Image), findsOneWidget);
@@ -26,12 +28,14 @@ void main() {
 
     testWidgets('TagLine widget test', (WidgetTester tester) async {
       await tester.pumpWidget(
-        const TestApp(
+        const LocalTestApp(
           home: Material(
             child: TagLine(),
           ),
         ),
       );
+
+      await tester.pumpAndSettle();
 
       // Verify if TagLine widget is present
       expect(find.byType(Container), findsOneWidget);
@@ -56,42 +60,42 @@ void main() {
 
     testWidgets('DescriptionSection widget test', (WidgetTester tester) async {
       await tester.pumpWidget(
-        const TestApp(
+        const LocalTestApp(
           home: Material(
             child: DescriptionSection(),
           ),
         ),
       );
 
+      await tester.pumpAndSettle();
+
       // Verify if DescriptionSection widget is present
       expect(find.byType(Container), findsOneWidget);
-      expect(
-          find.text(
-              "New way to study abroad from the real professional with great work."),
-          findsOneWidget);
+      expect(find.text("onboardDescription"), findsOneWidget);
 
       // Add more specific tests for the DescriptionSection widget
       expect(
           find.descendant(
               of: find.byType(Container),
-              matching: find.text(
-                  "New way to study abroad from the real professional with great work.")),
+              matching: find.text("onboardDescription")),
           findsOneWidget);
     });
 
     testWidgets('CreateNewAccountButton widget test',
         (WidgetTester tester) async {
       await tester.pumpWidget(
-        const TestApp(
+        const LocalTestApp(
           home: Material(
             child: CreateNewAccountButton(),
           ),
         ),
       );
 
+      await tester.pumpAndSettle();
+
       // Verify if CreateNewAccountButton widget is present
       expect(find.byType(CustomButton), findsOneWidget);
-      expect(find.text('Create New Account'), findsOneWidget);
+      expect(find.text('onboardCreateAccountButtonLabel'), findsOneWidget);
 
       await tester.tap(find.byType(InkWell), warnIfMissed: false);
       await tester.pumpAndSettle();
@@ -100,16 +104,18 @@ void main() {
 
     testWidgets('GoToSignInButton widget test', (WidgetTester tester) async {
       await tester.pumpWidget(
-        const TestApp(
+        const LocalTestApp(
           home: Material(
             child: GoToSignInButton(),
           ),
         ),
       );
 
+      await tester.pumpAndSettle();
+
       // Verify if GoToSignInButton widget is present
       expect(find.byType(CustomTextButton), findsOneWidget);
-      expect(find.text('Sign In to My Account'), findsOneWidget);
+      expect(find.text('onboardGoToSignInButtonLabel'), findsOneWidget);
 
       await tester.tap(find.byType(InkWell), warnIfMissed: false);
       await tester.pumpAndSettle();
@@ -118,12 +124,14 @@ void main() {
 
     testWidgets("OnboardScreen widget test", (WidgetTester tester) async {
       await tester.pumpWidget(
-        const TestApp(
+        const LocalTestApp(
           home: Material(
             child: OnboardScreen(),
           ),
         ),
       );
+
+      await tester.pumpAndSettle();
 
       expect(find.byType(OnboardLogo), findsOneWidget);
       expect(find.byType(TagLine), findsOneWidget);
@@ -134,17 +142,13 @@ void main() {
   });
 }
 
-class TestApp extends StatelessWidget {
+class LocalTestApp extends StatelessWidget {
   final Widget home;
-  const TestApp({super.key, required this.home});
+  const LocalTestApp({super.key, required this.home});
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(
-      context,
-      designSize: const Size(393, 847),
-    );
-    return MaterialApp(
+    return LocalizationTestApp(
       routes: {
         '/': (_) => home,
         '/sign-in': (_) => const MockRoutePage(

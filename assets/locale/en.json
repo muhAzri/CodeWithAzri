@@ -1,0 +1,17 @@
+{
+    "onboardDescription": "New way to study from the real professional with great work.",
+    "onboardCreateAccountButtonLabel": "Create New Account",
+    "onboardGoToSignInButtonLabel": "Sign In to My Account",
+    "signInWelcomeMessage": "Welcome Back!",
+    "signInSubtitle": "Sign In to your account",
+    "dontHaveAnAccountText": "Don't have an account? ",
+    "nameHintText": "Type Your Name",
+    "emailHintText": "Type Your Email",
+    "passwordHintText": "Type Your Password",
+    "forgotPasswordText": "Forgot Password",
+    "signInButtonLabel": "Sign In",
+    "signUpButtonLabel": "Sign Up",
+    "signUpWelcomeMessage": "Hello Fam 👋",
+    "signUpSubtitle": "Create your account & enjoy",
+    "alreadyHaveAnAccountText": "Already have an account? "
+}

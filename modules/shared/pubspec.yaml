@@ -8,6 +8,7 @@ environment:
   flutter: ">=1.17.0"
 
 dependencies:
+  easy_localization: ^3.0.3
   flutter:
     sdk: flutter
   flutter_screenutil: ^5.9.0
@@ -27,6 +28,7 @@ flutter:
   assets:
       - assets/images/
       - assets/icons/
+      # - l10n/
 
 #
 # For details regarding assets in packages, see
