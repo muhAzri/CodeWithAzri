@@ -1,0 +1,17 @@
+{
+    "onboardDescription": "Cara baru untuk belajar dari para profesional yang sangat berpengalaman.",
+    "onboardCreateAccountButtonLabel": "Buat Akun Baru",
+    "onboardGoToSignInButtonLabel": "Masuk ke Akun Saya",
+    "signInWelcomeMessage": "Selamat Datang Kembali!",
+    "signInSubtitle": "Masuk ke akun Anda",
+    "dontHaveAnAccountText": "Belum punya akun? ",
+    "nameHintText": "Masukan Nama Anda",
+    "emailHintText": "Masukkan Email Anda",
+    "passwordHintText": "Masukkan Kata Sandi Anda",
+    "forgotPasswordText": "Lupa Kata Sandi",
+    "signInButtonLabel": "Masuk",
+    "signUpButtonLabel": "Daftar",
+    "signUpWelcomeMessage": "Halo Fam 👋",
+    "signUpSubtitle": "Buat akun Anda & Enjoy",
+    "alreadyHaveAnAccountText": "Sudah memiliki akun? "
+}

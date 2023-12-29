@@ -1,0 +1,17 @@
+{
+    "onboardDescription": "Neue Möglichkeit, von echten Profis mit großartiger Arbeit zu lernen.",
+    "onboardCreateAccountButtonLabel": "Neues Konto erstellen",
+    "onboardGoToSignInButtonLabel": "Anmelden bei meinem Konto",
+    "signInWelcomeMessage": "Willkommen zurück!",
+    "signInSubtitle": "Melden Sie sich bei Ihrem Konto an",
+    "dontHaveAnAccountText": "Sie haben noch kein Konto? ",
+    "nameHintText": "Geben Sie Ihren Namen ein",
+    "emailHintText": "Geben Sie Ihre E-Mail ein",
+    "passwordHintText": "Geben Sie Ihr Passwort ein",
+    "forgotPasswordText": "Passwort vergessen",
+    "signInButtonLabel": "Anmelden",
+    "signUpButtonLabel": "Registrieren",
+    "signUpWelcomeMessage": "Hallo Fam 👋",
+    "signUpSubtitle": "Erstellen Sie Ihr Konto und genießen Sie",
+    "alreadyHaveAnAccountText": "Sie haben bereits ein Konto? "
+}
