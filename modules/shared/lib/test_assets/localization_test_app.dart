@@ -9,6 +9,7 @@ class LocalizationTestApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    EasyLocalization.logger.enableBuildModes = [];
     return EasyLocalization(
       supportedLocales: const [
         Locale('en'),

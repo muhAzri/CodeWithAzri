@@ -7,6 +7,7 @@ import 'app.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
+  EasyLocalization.logger.enableBuildModes = [];
 
   runApp(MyApp(
     appRouter: AppRouter(),
