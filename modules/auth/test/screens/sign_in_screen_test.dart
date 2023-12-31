@@ -1,6 +1,7 @@
 import 'package:app/app.dart';
 import 'package:auth/auth.dart';
 import 'package:auth/bloc/sign_in/sign_in_bloc.dart';
+import 'package:bloc_test/bloc_test.dart';
 import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:models/DTO/auth/sign_in_dto.dart';
 import 'package:networking/services/auth_services.dart';
 import 'package:shared/shared.dart';
 
@@ -20,11 +22,20 @@ class MockAuthServiceImpl extends AuthServiceImpl {
   });
 }
 
+class MockSignInBloc extends Mock implements SignInBloc {
+  MockSignInBloc({required service}) {
+    // Mock the close method to return a non-null Future.
+    when(() => close()).thenAnswer((_) async {});
+    // Mock any other methods you need here.
+  }
+}
+
 void main() {
   late SignInBloc signInBloc;
   late MockAuthServiceImpl authService;
   late MockFirebaseAuth mockFirebaseAuth;
   late MockGoogleSignIn mockGoogleSignIn;
+  late MockSignInBloc mockSignInBloc;
 
   setUp(() {
     mockFirebaseAuth = MockFirebaseAuth();
@@ -32,7 +43,9 @@ void main() {
     authService = MockAuthServiceImpl(
         firebaseAuth: mockFirebaseAuth, googleSignIn: mockGoogleSignIn);
     signInBloc = SignInBloc(service: authService);
+    mockSignInBloc = MockSignInBloc(service: authService);
   });
+
   group('SignInScreen Widgets Test', () {
     testWidgets('BuildSignInHeader Widget Test', (WidgetTester tester) async {
       await tester.pumpWidget(
@@ -132,6 +145,53 @@ void main() {
       );
 
       expect(find.byType(SingleChildScrollView), findsOneWidget);
+    });
+
+    testWidgets('SignInBlocListener Test', (WidgetTester tester) async {
+      whenListen(
+        mockSignInBloc,
+        Stream.fromIterable([
+          SignInInitial(),
+          SignInLoading(),
+          SignInSuccess(),
+        ]),
+        initialState: SignInInitial(),
+      );
+
+      await tester.pumpWidget(
+        BlocProvider<SignInBloc>(
+          create: (context) => mockSignInBloc,
+          child: TestApp(
+            routes: {
+              '/': (_) => MediaQuery(
+                    data: const MediaQueryData(
+                        textScaler: TextScaler.linear(0.5)),
+                    child: SignInScreen(),
+                  ),
+              '/onboard': (_) => const Scaffold(
+                    body: Center(
+                      child: Text('onboarding'),
+                    ),
+                  )
+            },
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      mockSignInBloc.add(
+        const SignInRequest(
+          signInDTO: SignInDTO(
+            email: "email",
+            password: "password",
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      await mockSignInBloc.close();
     });
   });
 }
