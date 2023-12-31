@@ -16,6 +16,8 @@ class MockAuthServiceImpl extends AuthServiceImpl {
   });
 }
 
+class MockAuth extends Mock implements MockFirebaseAuth {}
+
 void main() {
   late SignInBloc signInBloc;
   late MockAuthServiceImpl authService;
@@ -58,6 +60,25 @@ void main() {
     );
 
     blocTest<SignInBloc, SignInState>(
+      'emits [SignInLoading, SignInFailed] when ForgotPasswordRequest is added failed',
+      build: () {
+        when(() => MockAuth().signInWithEmailAndPassword(
+              email: signInDTO.email,
+              password: signInDTO.password,
+            )).thenThrow(Exception('Failed to sign in'));
+
+        var newAuthService = MockAuthServiceImpl(
+            firebaseAuth: MockAuth(), googleSignIn: mockGoogleSignIn);
+        return SignInBloc(service: newAuthService);
+      },
+      act: (bloc) => bloc.add(const SignInRequest(signInDTO: signInDTO)),
+      expect: () => [
+        SignInLoading(),
+        const SignInFailed(error: "Excception: 'Failed to sign in'"),
+      ],
+    );
+
+    blocTest<SignInBloc, SignInState>(
       'emits [ForgotPasswordLoading, ForgotPasswordSuccess] when ForgotPasswordRequest is added successfully',
       build: () {
         when(() async =>
@@ -68,6 +89,24 @@ void main() {
       expect: () => [
         ForgotPasswordLoading(),
         ForgotPasswordSuccess(),
+      ],
+    );
+
+    blocTest<SignInBloc, SignInState>(
+      'emits [ForgotPasswordLoading, ForgotPasswordSuccess] when ForgotPasswordRequest is failed',
+      build: () {
+        when(() => MockAuth().sendPasswordResetEmail(email: email))
+            .thenThrow(Exception('Failed to send password reset email'));
+
+        var newAuthService = MockAuthServiceImpl(
+            firebaseAuth: MockAuth(), googleSignIn: mockGoogleSignIn);
+        return SignInBloc(service: newAuthService);
+      },
+      act: (bloc) => bloc.add(const ForgotPasswordRequest(email: email)),
+      expect: () => [
+        ForgotPasswordLoading(),
+        const ForgotPasswordFailed(
+            error: "Excception: 'Failed to send password reset email'"),
       ],
     );
   });

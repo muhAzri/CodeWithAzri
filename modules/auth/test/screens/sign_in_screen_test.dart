@@ -30,6 +30,10 @@ class MockSignInBloc extends Mock implements SignInBloc {
   }
 }
 
+class MockAuth extends Mock implements MockFirebaseAuth {}
+
+class MockBuildContext extends Mock implements BuildContext {}
+
 void main() {
   late SignInBloc signInBloc;
   late MockAuthServiceImpl authService;
@@ -190,6 +194,60 @@ void main() {
       );
 
       await tester.pumpAndSettle();
+
+      await mockSignInBloc.close();
+    });
+
+    testWidgets('SignInBlocListener Test Failed Test',
+        (WidgetTester tester) async {
+      var newAuthService = MockAuthServiceImpl(
+          firebaseAuth: MockAuth(), googleSignIn: mockGoogleSignIn);
+      var newMockSignInBloc = MockSignInBloc(service: newAuthService);
+
+      whenListen(
+        newMockSignInBloc,
+        Stream.fromIterable([
+          SignInInitial(),
+          SignInLoading(),
+          const SignInFailed(error: "Failed to Sign In"),
+        ]),
+        initialState: SignInInitial(),
+      );
+
+      await tester.pumpWidget(
+        BlocProvider<SignInBloc>(
+          create: (context) => newMockSignInBloc,
+          child: TestApp(
+            routes: {
+              '/': (_) => MediaQuery(
+                    data: const MediaQueryData(
+                        textScaler: TextScaler.linear(0.5)),
+                    child: SignInScreen(),
+                  ),
+              '/onboard': (_) => const Scaffold(
+                    body: Center(
+                      child: Text('onboarding'),
+                    ),
+                  )
+            },
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      mockSignInBloc.add(
+        const SignInRequest(
+          signInDTO: SignInDTO(
+            email: "email",
+            password: "password",
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      expect(find.text('Failed to Sign In'), findsOneWidget);
 
       await mockSignInBloc.close();
     });
