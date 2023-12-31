@@ -6,3 +6,14 @@ sealed class SignUpEvent extends Equatable {
   @override
   List<Object> get props => [];
 }
+
+class SignUpRequest extends SignUpEvent {
+  final SignUpDTO dto;
+
+  const SignUpRequest({required this.dto});
+
+  @override
+  List<Object> get props => [dto];
+}
+
+class SignUpByGoogleRequest extends SignUpEvent {}
