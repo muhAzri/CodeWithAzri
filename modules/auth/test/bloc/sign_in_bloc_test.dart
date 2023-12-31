@@ -143,5 +143,12 @@ void main() {
         const SignInFailed(error: ''),
       ],
     );
+
+    test('should initialize services with provided AuthService', () {
+      final mockAuthService = authService;
+      final signInBloc = SignInBloc(service: mockAuthService);
+
+      expect(signInBloc.services, equals(mockAuthService));
+    });
   });
 }
