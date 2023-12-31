@@ -1,4 +1,5 @@
 import 'package:auth/bloc/sign_in/sign_in_bloc.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -7,7 +8,11 @@ import 'package:mocktail/mocktail.dart';
 import 'package:models/DTO/auth/sign_in_dto.dart';
 import 'package:networking/services/auth_services.dart';
 
-class MockGoogleSignIn extends Mock implements GoogleSignIn {}
+class MockGoogleSignIn extends Mock implements GoogleSignIn {
+  MockGoogleSignIn() {
+    when(() => signIn()).thenAnswer((_) async => MockGoogleSignInAccount());
+  }
+}
 
 class MockAuthServiceImpl extends AuthServiceImpl {
   MockAuthServiceImpl({
@@ -17,6 +22,18 @@ class MockAuthServiceImpl extends AuthServiceImpl {
 }
 
 class MockAuth extends Mock implements MockFirebaseAuth {}
+
+class MockSignInBloc extends Mock implements SignInBloc {
+  MockSignInBloc({required service}) {
+    // Mock the close method to return a non-null Future.
+    when(() => close()).thenAnswer((_) async {});
+    // Mock any other methods you need here.
+  }
+}
+
+class MockGoogleSignInAccount extends Mock implements GoogleSignInAccount {}
+
+class MockUserCredential extends Mock implements UserCredential {}
 
 void main() {
   late SignInBloc signInBloc;
@@ -107,6 +124,23 @@ void main() {
         ForgotPasswordLoading(),
         const ForgotPasswordFailed(
             error: "Excception: 'Failed to send password reset email'"),
+      ],
+    );
+
+    blocTest<SignInBloc, SignInState>(
+      'emits [SignInLoading, SignInFailed] when signInWithGoogle is failed',
+      build: () {
+        var newAuthService = MockAuthServiceImpl(
+            firebaseAuth: MockAuth(), googleSignIn: mockGoogleSignIn);
+        when(() => mockGoogleSignIn.signIn())
+            .thenAnswer((_) => Future.value(MockGoogleSignInAccount()));
+
+        return SignInBloc(service: newAuthService);
+      },
+      act: (bloc) => bloc.add(SignInByGoogleRequest()),
+      expect: () => [
+        SignInLoading(),
+        const SignInFailed(error: ''),
       ],
     );
   });
