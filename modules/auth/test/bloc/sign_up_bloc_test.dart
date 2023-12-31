@@ -136,9 +136,9 @@ void main() {
 
     test('should initialize services with provided AuthService', () {
       final mockAuthService = authService;
-      final signInBloc = SignUpBloc(service: mockAuthService);
+      final signUpBloc = SignUpBloc(service: mockAuthService);
 
-      expect(signInBloc.services, equals(mockAuthService));
+      expect(signUpBloc.services, equals(mockAuthService));
     });
   });
 }
