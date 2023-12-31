@@ -1,5 +1,7 @@
 import 'package:app/app.dart';
 import 'package:auth/auth.dart';
+import 'package:auth/bloc/sign_in/sign_in_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared/shared.dart';
 import 'package:flutter/material.dart';
 
@@ -21,7 +23,10 @@ class AppRouter {
                 return const SignUpScreen();
 
               case AppRoutes.signInScreen:
-                return const SignInScreen();
+                return BlocProvider(
+                  create: (context) => SignInBloc(),
+                  child: SignInScreen(),
+                );
 
               default:
                 return const NamedRouteNotFound();

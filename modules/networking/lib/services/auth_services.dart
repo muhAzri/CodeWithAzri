@@ -27,6 +27,10 @@ class AuthServiceImpl {
 
   AuthServiceImpl({required this.firebaseAuth, required this.googleSignIn});
 
+  Future<void> sendPasswordResetEmail(String email) async {
+    await firebaseAuth.sendPasswordResetEmail(email: email);
+  }
+
   Future<User> signUp(SignUpDTO dto) async {
     try {
       final UserCredential credential =
@@ -43,14 +47,16 @@ class AuthServiceImpl {
     }
   }
 
-  Future<User> signInWithEmailAndPassword(SignInDTO dto) async {
+  Future<void> signInWithEmailAndPassword(SignInDTO dto) async {
     try {
       final UserCredential credential =
           await firebaseAuth.signInWithEmailAndPassword(
         email: dto.email,
         password: dto.password,
       );
-      return _checkUserCredential(credential);
+
+      //TODO: set this as variable then hit user verify to Backend;
+      _checkUserCredential(credential);
     } catch (e) {
       if (e is FirebaseAuthException) {
         throw "${e.message}";
@@ -73,10 +79,7 @@ class AuthServiceImpl {
   Future<User> signInWithGoogle() async {
     final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
     if (googleUser == null) {
-      throw FirebaseAuthException(
-        code: 'sign_in_failed',
-        message: 'Sign in with Google failed',
-      );
+      throw 'Sign in with Google failed';
     }
 
     final GoogleSignInAuthentication googleAuth =

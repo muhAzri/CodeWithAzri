@@ -13,5 +13,6 @@
     "signUpButtonLabel": "Registrieren",
     "signUpWelcomeMessage": "Hallo Fam 👋",
     "signUpSubtitle": "Erstellen Sie Ihr Konto und genießen Sie",
-    "alreadyHaveAnAccountText": "Sie haben bereits ein Konto? "
+    "alreadyHaveAnAccountText": "Sie haben bereits ein Konto? ",
+    "formsEmptyMessage": "Bitte füllen Sie alle Formularfelder aus"
 }

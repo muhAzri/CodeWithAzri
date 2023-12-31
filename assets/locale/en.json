@@ -13,5 +13,6 @@
     "signUpButtonLabel": "Sign Up",
     "signUpWelcomeMessage": "Hello Fam 👋",
     "signUpSubtitle": "Create your account & enjoy",
-    "alreadyHaveAnAccountText": "Already have an account? "
+    "alreadyHaveAnAccountText": "Already have an account? ",
+    "formsEmptyMessage": "Please fill out all form fields"
 }

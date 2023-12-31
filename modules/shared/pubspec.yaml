@@ -8,6 +8,7 @@ environment:
   flutter: ">=1.17.0"
 
 dependencies:
+  another_flushbar: ^1.12.30
   easy_localization: ^3.0.3
   flutter:
     sdk: flutter
@@ -22,13 +23,13 @@ dev_dependencies:
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 # The following section is specific to Flutter packages.
-flutter: 
+flutter:
 
-# To add assets to your package, add an assets section, like this:
+  # To add assets to your package, add an assets section, like this:
   assets:
-      - assets/images/
-      - assets/icons/
-      # - l10n/
+    - assets/images/
+    - assets/icons/
+    # - l10n/
 
 #
 # For details regarding assets in packages, see
