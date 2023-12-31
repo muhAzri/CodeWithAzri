@@ -1,6 +1,6 @@
 ![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/muhAzri/CodeWithAzri?style=flat-square) 
 ![GitHub repo size](https://img.shields.io/github/repo-size/muhAzri/CodeWithAzri?style=flat-square)
-![Codecov](https://img.shields.io/codecov/c/github/MuhAzri/CodeWithAzri)
+<!-- ![Codecov](https://img.shields.io/codecov/c/github/MuhAzri/CodeWithAzri) -->
 
 # Code With Azri - Learn, Explore, Create!
 
