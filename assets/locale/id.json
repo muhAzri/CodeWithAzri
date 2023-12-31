@@ -13,5 +13,7 @@
     "signUpButtonLabel": "Daftar",
     "signUpWelcomeMessage": "Halo Fam 👋",
     "signUpSubtitle": "Buat akun Anda & Enjoy",
-    "alreadyHaveAnAccountText": "Sudah memiliki akun? "
+    "alreadyHaveAnAccountText": "Sudah memiliki akun? ",
+    "formsEmptyMessage": "Harap isi semua kolom formulir",
+    "resetPasswordSended": "Email reset password telah dikirim kepada Anda!"
 }

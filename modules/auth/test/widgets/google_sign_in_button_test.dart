@@ -1,7 +1,35 @@
 import 'package:auth/auth.dart';
+import 'package:auth/bloc/sign_in/sign_in_bloc.dart';
+import 'package:bloc_test/bloc_test.dart';
+import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:networking/services/auth_services.dart';
+
+class MockGoogleSignIn extends Mock implements GoogleSignIn {}
+
+class MockAuthServiceImpl extends AuthServiceImpl {
+  MockAuthServiceImpl({
+    required super.firebaseAuth,
+    required super.googleSignIn,
+  });
+}
+
+class MockSignInBloc extends Mock implements SignInBloc {
+  MockSignInBloc({required service}) {
+    // Mock the close method to return a non-null Future.
+    when(() => close()).thenAnswer((_) async {});
+    // Mock any other methods you need here.
+  }
+}
+
+class MockAuth extends Mock implements MockFirebaseAuth {}
+
+class MockBuildContext extends Mock implements BuildContext {}
 
 void main() {
   group('GoogleSignInButton tests', () {
@@ -56,18 +84,47 @@ void main() {
       expect(containerWidget.margin, equals(const EdgeInsets.all(20.0)));
     });
 
-    testWidgets('Widget onTap callback is triggered',
+    testWidgets('Widget onTap callback is call Bloc Event Correctly',
         (WidgetTester tester) async {
+      var newAuthService = MockAuthServiceImpl(
+          firebaseAuth: MockAuth(), googleSignIn: MockGoogleSignIn());
+      var newMockSignInBloc = MockSignInBloc(service: newAuthService);
+
+      whenListen(
+        newMockSignInBloc,
+        Stream.fromIterable([
+          SignInInitial(),
+          SignInLoading(),
+          SignInSuccess(),
+        ]),
+        initialState: SignInInitial(),
+      );
+
       await tester.pumpWidget(
-        const TestApp(
-          home: Scaffold(
-            body: GoogleSignInButton(),
+        TestApp(
+          home: BlocProvider<SignInBloc>(
+            create: (context) => newMockSignInBloc,
+            child: const Scaffold(
+              body: GoogleSignInButton(
+                bloc: SignInBloc,
+              ),
+            ),
           ),
         ),
       );
 
+      await tester.pumpAndSettle();
+
       final inkWellFinder = find.byType(InkWell);
       await tester.tap(inkWellFinder, warnIfMissed: false);
+
+      await tester.pumpAndSettle();
+
+      verify(
+        () => newMockSignInBloc.add(SignInByGoogleRequest()),
+      ).called(1);
+
+      await tester.pumpAndSettle();
     });
   });
 }

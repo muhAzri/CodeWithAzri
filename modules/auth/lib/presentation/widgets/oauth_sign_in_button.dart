@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class OAuthSignInButton extends StatelessWidget {
-  const OAuthSignInButton({super.key});
+  final Type? bloc;
+  const OAuthSignInButton({super.key, this.bloc});
 
   @override
   Widget build(BuildContext context) {
@@ -15,6 +16,7 @@ class OAuthSignInButton extends StatelessWidget {
     }
 
     return GoogleSignInButton(
+      bloc: bloc,
       padding: EdgeInsets.only(top: 30.h),
     );
   }
