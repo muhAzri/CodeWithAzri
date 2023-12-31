@@ -101,12 +101,34 @@ void main() {
     });
 
     testWidgets('BuildSignInButton Widget Test', (WidgetTester tester) async {
+      var newAuthService = MockAuthServiceImpl(
+          firebaseAuth: MockAuth(), googleSignIn: mockGoogleSignIn);
+      var newMockSignInBloc = MockSignInBloc(service: newAuthService);
+
+      whenListen(
+        newMockSignInBloc,
+        Stream.fromIterable([
+          SignInInitial(),
+          SignInLoading(),
+          SignInSuccess(),
+        ]),
+        initialState: SignInInitial(),
+      );
+
       await tester.pumpWidget(
         LocalizationTestApp(
-          child: Material(
-            child: BuildSignInButton(
-              emailController: TextEditingController(text: ''),
-              passwordController: TextEditingController(text: ''),
+          child: BlocProvider<SignInBloc>(
+            create: (context) => newMockSignInBloc,
+            child: Builder(
+              builder: (context) {
+                return Material(
+                  child: BuildSignInButton(
+                    emailController:
+                        TextEditingController(text: 'email@domain.com'),
+                    passwordController: TextEditingController(text: 'password'),
+                  ),
+                );
+              },
             ),
           ),
         ),
@@ -115,6 +137,19 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('signInButtonLabel'), findsOneWidget);
+
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byType(InkWell), warnIfMissed: false);
+
+      verify(
+        () => newMockSignInBloc.add(
+          const SignInRequest(
+            signInDTO:
+                SignInDTO(email: "email@domain.com", password: "password"),
+          ),
+        ),
+      ).called(1);
     });
 
     testWidgets('BuildCreateAccountButton Widget Test',
