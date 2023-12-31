@@ -152,6 +152,50 @@ void main() {
       ).called(1);
     });
 
+    testWidgets('BuildSignInButton Widget Test Empty Forms', (WidgetTester tester) async {
+      var newAuthService = MockAuthServiceImpl(
+          firebaseAuth: MockAuth(), googleSignIn: mockGoogleSignIn);
+      var newMockSignInBloc = MockSignInBloc(service: newAuthService);
+
+      whenListen(
+        newMockSignInBloc,
+        Stream.fromIterable([
+          SignInInitial(),
+        ]),
+        initialState: SignInInitial(),
+      );
+
+      await tester.pumpWidget(
+        LocalizationTestApp(
+          child: BlocProvider<SignInBloc>(
+            create: (context) => newMockSignInBloc,
+            child: Builder(
+              builder: (context) {
+                return Material(
+                  child: BuildSignInButton(
+                    emailController: TextEditingController(text: ''),
+                    passwordController: TextEditingController(text: ''),
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      expect(find.text('signInButtonLabel'), findsOneWidget);
+
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byType(InkWell), warnIfMissed: false);
+
+      await tester.pumpAndSettle();
+
+      expect(find.text('formsEmptyMessage'), findsOneWidget);
+    });
+
     testWidgets('BuildCreateAccountButton Widget Test',
         (WidgetTester tester) async {
       await tester.pumpWidget(
