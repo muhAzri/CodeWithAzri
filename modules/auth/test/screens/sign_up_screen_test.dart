@@ -39,6 +39,20 @@ class MockFirebaseAuth extends Mock implements FirebaseAuth {}
 
 class MockAuth extends Mock implements MockFirebaseAuth {}
 
+class MockBuildContext extends Mock implements BuildContext {}
+
+enum NavigatorAction { push, pop }
+
+class MockNavigatorObserver extends NavigatorObserver {
+  final List<NavigatorAction> history = [];
+
+  @override
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    history.add(NavigatorAction.push);
+    super.didPush(route, previousRoute);
+  }
+}
+
 void main() {
   late SignUpBloc signUpBloc;
   late MockAuthServiceImpl authService;
@@ -222,13 +236,18 @@ void main() {
 
     testWidgets('BuildHaveAccountButton Widget Test',
         (WidgetTester tester) async {
+      final mockObserver = MockNavigatorObserver();
+
       await tester.pumpWidget(
-        const LocalizationTestApp(
+        LocalizationTestApp(
+          navigatorObservers: [mockObserver],
           child: Material(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: BuildHaveAccountButton(),
-            ),
+            child: Builder(builder: (context) {
+              return const SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: BuildHaveAccountButton(),
+              );
+            }),
           ),
         ),
       );
@@ -237,6 +256,14 @@ void main() {
 
       expect(find.text('alreadyHaveAnAccountText'), findsOneWidget);
       expect(find.text('signInButtonLabel'), findsOneWidget);
+
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byType(InkWell), warnIfMissed: false);
+
+      await tester.pumpAndSettle();
+
+      expect(mockObserver.history.contains(NavigatorAction.push), isTrue);
     });
 
     testWidgets('OrDividerWidget Widget Test', (WidgetTester tester) async {
