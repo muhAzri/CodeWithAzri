@@ -100,6 +100,86 @@ void main() {
       expect(signInFormsState.isObsecured, !initialObscureText);
     });
 
+    testWidgets('BuildSignInForms Widget Test ForgotPassword Success',
+        (WidgetTester tester) async {
+      var newAuthService = MockAuthServiceImpl(
+          firebaseAuth: MockAuth(), googleSignIn: mockGoogleSignIn);
+      var newMockSignInBloc = MockSignInBloc(service: newAuthService);
+
+      whenListen(
+        newMockSignInBloc,
+        Stream.fromIterable([
+          SignInInitial(),
+          ForgotPasswordLoading(),
+          ForgotPasswordSuccess(),
+        ]),
+        initialState: SignInInitial(),
+      );
+
+      await tester.pumpWidget(
+        TestApp(
+          home: BlocProvider<SignInBloc>(
+            create: (context) => newMockSignInBloc,
+            child: const Material(
+              child: BuildSignInForms(),
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      Finder firstCustomTextFormField = find.byType(CustomTextFormField).first;
+
+      await tester.enterText(firstCustomTextFormField, 'email@domain.com');
+
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('forgotPasswordText'), warnIfMissed: false);
+
+      verify(
+        () => newMockSignInBloc.add(
+          const ForgotPasswordRequest(email: 'email@domain.com'),
+        ),
+      ).called(1);
+
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('BuildSignInForms Widget Test ForgotPassword Failed',
+        (WidgetTester tester) async {
+      var newAuthService = MockAuthServiceImpl(
+          firebaseAuth: MockAuth(), googleSignIn: mockGoogleSignIn);
+      var newMockSignInBloc = MockSignInBloc(service: newAuthService);
+
+      whenListen(
+        newMockSignInBloc,
+        Stream.fromIterable([
+          SignInInitial(),
+          ForgotPasswordLoading(),
+          const ForgotPasswordFailed(error: "Please emailHintText"),
+        ]),
+        initialState: SignInInitial(),
+      );
+
+      await tester.pumpWidget(
+        TestApp(
+          home: BlocProvider(
+            create: (context) => newMockSignInBloc,
+            child: const Material(
+              child: BuildSignInForms(),
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('forgotPasswordText'), warnIfMissed: false);
+
+      await tester.pumpAndSettle();
+    });
+
     testWidgets('BuildSignInButton Widget Test', (WidgetTester tester) async {
       var newAuthService = MockAuthServiceImpl(
           firebaseAuth: MockAuth(), googleSignIn: mockGoogleSignIn);
@@ -152,7 +232,8 @@ void main() {
       ).called(1);
     });
 
-    testWidgets('BuildSignInButton Widget Test Empty Forms', (WidgetTester tester) async {
+    testWidgets('BuildSignInButton Widget Test Empty Forms',
+        (WidgetTester tester) async {
       var newAuthService = MockAuthServiceImpl(
           firebaseAuth: MockAuth(), googleSignIn: mockGoogleSignIn);
       var newMockSignInBloc = MockSignInBloc(service: newAuthService);
@@ -327,6 +408,108 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Failed to Sign In'), findsOneWidget);
+
+      await mockSignInBloc.close();
+    });
+
+    testWidgets('SignInBlocListener Test Failed Forgot Success',
+        (WidgetTester tester) async {
+      var newAuthService = MockAuthServiceImpl(
+          firebaseAuth: MockAuth(), googleSignIn: mockGoogleSignIn);
+      var newMockSignInBloc = MockSignInBloc(service: newAuthService);
+
+      whenListen(
+        newMockSignInBloc,
+        Stream.fromIterable([
+          SignInInitial(),
+          ForgotPasswordLoading(),
+          ForgotPasswordSuccess()
+        ]),
+        initialState: SignInInitial(),
+      );
+
+      await tester.pumpWidget(
+        BlocProvider<SignInBloc>(
+          create: (context) => newMockSignInBloc,
+          child: TestApp(
+            routes: {
+              '/': (_) => MediaQuery(
+                    data: const MediaQueryData(
+                        textScaler: TextScaler.linear(0.5)),
+                    child: SignInScreen(),
+                  ),
+              '/onboard': (_) => const Scaffold(
+                    body: Center(
+                      child: Text('onboarding'),
+                    ),
+                  )
+            },
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      mockSignInBloc.add(
+        const ForgotPasswordRequest(
+          email: "email",
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      expect(find.text('resetPasswordSended'), findsOneWidget);
+
+      await mockSignInBloc.close();
+    });
+
+    testWidgets('SignInBlocListener Test Failed Forgot Password',
+        (WidgetTester tester) async {
+      var newAuthService = MockAuthServiceImpl(
+          firebaseAuth: MockAuth(), googleSignIn: mockGoogleSignIn);
+      var newMockSignInBloc = MockSignInBloc(service: newAuthService);
+
+      whenListen(
+        newMockSignInBloc,
+        Stream.fromIterable([
+          SignInInitial(),
+          ForgotPasswordLoading(),
+          const ForgotPasswordFailed(error: "Failed to Send Email"),
+        ]),
+        initialState: SignInInitial(),
+      );
+
+      await tester.pumpWidget(
+        BlocProvider<SignInBloc>(
+          create: (context) => newMockSignInBloc,
+          child: TestApp(
+            routes: {
+              '/': (_) => MediaQuery(
+                    data: const MediaQueryData(
+                        textScaler: TextScaler.linear(0.5)),
+                    child: SignInScreen(),
+                  ),
+              '/onboard': (_) => const Scaffold(
+                    body: Center(
+                      child: Text('onboarding'),
+                    ),
+                  )
+            },
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      mockSignInBloc.add(
+        const ForgotPasswordRequest(
+          email: "email",
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      expect(find.text('Failed to Send Email'), findsOneWidget);
 
       await mockSignInBloc.close();
     });

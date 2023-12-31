@@ -30,7 +30,7 @@ class SignInScreen extends StatelessWidget {
         if (state is ForgotPasswordSuccess) {
           FlushbarUtils.showFlushbar(
             context,
-            message: "Email has been sent to you!",
+            message: "resetPasswordSended".tr(),
             color: Colors.green,
           );
         }

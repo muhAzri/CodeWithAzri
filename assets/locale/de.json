@@ -14,5 +14,6 @@
     "signUpWelcomeMessage": "Hallo Fam 👋",
     "signUpSubtitle": "Erstellen Sie Ihr Konto und genießen Sie",
     "alreadyHaveAnAccountText": "Sie haben bereits ein Konto? ",
-    "formsEmptyMessage": "Bitte füllen Sie alle Formularfelder aus"
+    "formsEmptyMessage": "Bitte füllen Sie alle Formularfelder aus",
+    "resetPasswordSended": "Das Zurücksetzen des Passworts wurde an Ihre E-Mail gesendet!"
 }
