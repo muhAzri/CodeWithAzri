@@ -7,10 +7,10 @@ part 'sign_up_event.dart';
 part 'sign_up_state.dart';
 
 class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
-  final AuthServiceImpl services;
+  final AuthService services;
 
-  SignUpBloc({AuthServiceImpl? service})
-      : services = service ?? AuthService.call(),
+  SignUpBloc({AuthService? service})
+      : services = service ?? AuthService(),
         super(SignUpInitial()) {
     on<SignUpRequest>(onSignUp);
     on<SignUpByGoogleRequest>(onSignUpByGoogle);

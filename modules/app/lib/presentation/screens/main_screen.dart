@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shared/shared.dart';
 
 class MainScreen extends StatefulWidget {
@@ -60,8 +61,8 @@ class _MainScreenState extends State<MainScreen> {
     return BottomNavigationBar(
       type: BottomNavigationBarType.fixed,
       selectedItemColor: whiteColor,
-      unselectedItemColor: bottomNavBackgroundColor,
-      backgroundColor: backgroundColor,
+      unselectedItemColor: grayColor,
+      backgroundColor: bottomNavBackgroundColor,
       currentIndex: _currentIndex,
       onTap: _setIndex,
       items: _bottomNavigationBarItems(),
@@ -71,26 +72,38 @@ class _MainScreenState extends State<MainScreen> {
   List<BottomNavigationBarItem> _bottomNavigationBarItems() {
     return [
       BottomNavigationBarItem(
-        icon: const Icon(
-          Icons.home_rounded,
+        icon: Container(
+          padding: EdgeInsets.only(top: 6.h),
+          child: const Icon(
+            Icons.home_rounded,
+          ),
         ),
         label: 'navBarItemHome'.tr(),
       ),
       BottomNavigationBarItem(
-        icon: const Icon(
-          Icons.explore_outlined,
+        icon: Container(
+          padding: EdgeInsets.only(top: 6.h),
+          child: const Icon(
+            Icons.explore_outlined,
+          ),
         ),
         label: 'navBarItemSearch'.tr(),
       ),
       BottomNavigationBarItem(
-        icon: const Icon(
-          Icons.menu_book_outlined,
+        icon: Container(
+          padding: EdgeInsets.only(top: 6.h),
+          child: const Icon(
+            Icons.menu_book_outlined,
+          ),
         ),
         label: 'navBarItemMyCourse'.tr(),
       ),
       BottomNavigationBarItem(
-        icon: const Icon(
-          Icons.person_outline,
+        icon: Container(
+          padding: EdgeInsets.only(top: 6.h),
+          child: const Icon(
+            Icons.person_outline,
+          ),
         ),
         label: 'navBarItemProfile'.tr(),
       ),

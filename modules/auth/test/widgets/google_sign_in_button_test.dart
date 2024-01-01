@@ -12,10 +12,10 @@ import 'package:networking/services/auth_services.dart';
 
 class MockGoogleSignIn extends Mock implements GoogleSignIn {}
 
-class MockAuthServiceImpl extends AuthServiceImpl {
-  MockAuthServiceImpl({
-    required super.firebaseAuth,
-    required super.googleSignIn,
+class MockAuthService extends Mock implements AuthService {
+  MockAuthService({
+     firebaseAuth,
+     googleSignIn,
   });
 }
 
@@ -86,7 +86,7 @@ void main() {
 
     testWidgets('Widget onTap callback is call Bloc Event Correctly',
         (WidgetTester tester) async {
-      var newAuthService = MockAuthServiceImpl(
+      var newAuthService = MockAuthService(
           firebaseAuth: MockAuth(), googleSignIn: MockGoogleSignIn());
       var newMockSignInBloc = MockSignInBloc(service: newAuthService);
 

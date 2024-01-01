@@ -20,8 +20,8 @@ class MockGoogleSignIn extends Mock implements GoogleSignIn {
 
 class MockUser extends Mock implements User {}
 
-class MockAuthServiceImpl extends Mock implements AuthServiceImpl {
-  MockAuthServiceImpl({
+class MockAuthService extends Mock implements AuthService {
+  MockAuthService({
     required firebaseAuth,
     required googleSignIn,
   }) {
@@ -55,14 +55,14 @@ class MockNavigatorObserver extends NavigatorObserver {
 
 void main() {
   late SignUpBloc signUpBloc;
-  late MockAuthServiceImpl authService;
+  late MockAuthService authService;
   late MockFirebaseAuth mockFirebaseAuth;
   late MockGoogleSignIn mockGoogleSignIn;
 
   setUp(() {
     mockFirebaseAuth = MockFirebaseAuth();
     mockGoogleSignIn = MockGoogleSignIn();
-    authService = MockAuthServiceImpl(
+    authService = MockAuthService(
         firebaseAuth: mockFirebaseAuth, googleSignIn: mockGoogleSignIn);
 
     signUpBloc = SignUpBloc(service: authService);
@@ -145,7 +145,7 @@ void main() {
       TextEditingController passwordController =
           TextEditingController(text: "Password");
 
-      var newAuthService = MockAuthServiceImpl(
+      var newAuthService = MockAuthService(
           firebaseAuth: MockAuth(), googleSignIn: mockGoogleSignIn);
       var newMockSignUpBloc = MockSignUpBloc(service: newAuthService);
 
@@ -291,7 +291,7 @@ void main() {
     });
 
     testWidgets('SignUp BlocListener Test', (WidgetTester tester) async {
-      var newAuthService = MockAuthServiceImpl(
+      var newAuthService = MockAuthService(
           firebaseAuth: MockAuth(), googleSignIn: mockGoogleSignIn);
       var newMockSignUpBloc = MockSignUpBloc(service: newAuthService);
 
@@ -341,7 +341,7 @@ void main() {
 
     testWidgets('SignUp BlocListener Test When Failed Occured',
         (WidgetTester tester) async {
-      var newAuthService = MockAuthServiceImpl(
+      var newAuthService = MockAuthService(
           firebaseAuth: MockAuth(), googleSignIn: mockGoogleSignIn);
       var newMockSignUpBloc = MockSignUpBloc(service: newAuthService);
 

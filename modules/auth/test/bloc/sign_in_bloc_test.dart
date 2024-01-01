@@ -14,8 +14,8 @@ class MockGoogleSignIn extends Mock implements GoogleSignIn {
   }
 }
 
-class MockAuthServiceImpl extends AuthServiceImpl {
-  MockAuthServiceImpl({
+class MockAuthService extends AuthService {
+  MockAuthService({
     required super.firebaseAuth,
     required super.googleSignIn,
   });
@@ -37,14 +37,14 @@ class MockUserCredential extends Mock implements UserCredential {}
 
 void main() {
   late SignInBloc signInBloc;
-  late MockAuthServiceImpl authService;
+  late MockAuthService authService;
   late MockFirebaseAuth mockFirebaseAuth;
   late MockGoogleSignIn mockGoogleSignIn;
 
   setUp(() {
     mockFirebaseAuth = MockFirebaseAuth();
     mockGoogleSignIn = MockGoogleSignIn();
-    authService = MockAuthServiceImpl(
+    authService = MockAuthService(
         firebaseAuth: mockFirebaseAuth, googleSignIn: mockGoogleSignIn);
     signInBloc = SignInBloc(service: authService);
   });
@@ -84,7 +84,7 @@ void main() {
               password: signInDTO.password,
             )).thenThrow(Exception('Failed to sign in'));
 
-        var newAuthService = MockAuthServiceImpl(
+        var newAuthService = MockAuthService(
             firebaseAuth: MockAuth(), googleSignIn: mockGoogleSignIn);
         return SignInBloc(service: newAuthService);
       },
@@ -115,7 +115,7 @@ void main() {
         when(() => MockAuth().sendPasswordResetEmail(email: email))
             .thenThrow(Exception('Failed to send password reset email'));
 
-        var newAuthService = MockAuthServiceImpl(
+        var newAuthService = MockAuthService(
             firebaseAuth: MockAuth(), googleSignIn: mockGoogleSignIn);
         return SignInBloc(service: newAuthService);
       },
@@ -130,7 +130,7 @@ void main() {
     blocTest<SignInBloc, SignInState>(
       'emits [SignInLoading, SignInFailed] when signInWithGoogle is failed',
       build: () {
-        var newAuthService = MockAuthServiceImpl(
+        var newAuthService = MockAuthService(
             firebaseAuth: MockAuth(), googleSignIn: mockGoogleSignIn);
         when(() => mockGoogleSignIn.signIn())
             .thenAnswer((_) => Future.value(MockGoogleSignInAccount()));

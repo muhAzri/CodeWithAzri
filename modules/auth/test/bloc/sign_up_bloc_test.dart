@@ -15,8 +15,8 @@ class MockGoogleSignIn extends Mock implements GoogleSignIn {
 
 class MockUser extends Mock implements User {}
 
-class MockAuthServiceImpl extends Mock implements AuthServiceImpl {
-  MockAuthServiceImpl({
+class MockAuthService extends Mock implements AuthService {
+  MockAuthService({
     required firebaseAuth,
     required googleSignIn,
   }) {
@@ -34,14 +34,14 @@ class MockFirebaseAuth extends Mock implements FirebaseAuth {}
 
 void main() {
   late SignUpBloc signUpBloc;
-  late MockAuthServiceImpl authService;
+  late MockAuthService authService;
   late MockFirebaseAuth mockFirebaseAuth;
   late MockGoogleSignIn mockGoogleSignIn;
 
   setUp(() {
     mockFirebaseAuth = MockFirebaseAuth();
     mockGoogleSignIn = MockGoogleSignIn();
-    authService = MockAuthServiceImpl(
+    authService = MockAuthService(
         firebaseAuth: mockFirebaseAuth, googleSignIn: mockGoogleSignIn);
     signUpBloc = SignUpBloc(service: authService);
   });
