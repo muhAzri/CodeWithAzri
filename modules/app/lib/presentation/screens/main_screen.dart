@@ -42,7 +42,7 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  Widget _buildBody() {
+  Widget? _buildBody() {
     switch (_currentIndex) {
       case 0:
         return _buildHomeScreen();
@@ -52,9 +52,8 @@ class _MainScreenState extends State<MainScreen> {
         return _buildMyCourseScreen();
       case 3:
         return _buildProfileScreen();
-      default:
-        return _buildHomeScreen();
     }
+    return null;
   }
 
   BottomNavigationBar buildBottomNavigationBar() {
