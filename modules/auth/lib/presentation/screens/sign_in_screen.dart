@@ -36,9 +36,8 @@ class SignInScreen extends StatelessWidget {
         }
 
         if (state is SignInSuccess) {
-          // TODO :Change the AppRoutes with the correct one
           Navigator.pushNamedAndRemoveUntil(
-              context, AppRoutes.onboardScreen, (route) => false);
+              context, AppRoutes.mainScreen, (route) => false);
         }
       },
       child: Scaffold(
