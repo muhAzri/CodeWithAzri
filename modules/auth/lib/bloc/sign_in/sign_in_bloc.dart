@@ -7,10 +7,10 @@ part 'sign_in_event.dart';
 part 'sign_in_state.dart';
 
 class SignInBloc extends Bloc<SignInEvent, SignInState> {
-  final AuthServiceImpl services;
+  final AuthService services;
 
-  SignInBloc({AuthServiceImpl? service})
-      : services = service ?? AuthService.call(),
+  SignInBloc({AuthService? service})
+      : services = service ?? AuthService(),
         super(SignInInitial()) {
     on<SignInRequest>(onSignIn);
     on<ForgotPasswordRequest>(onForgotPassword);

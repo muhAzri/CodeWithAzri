@@ -5,27 +5,23 @@ import 'package:models/DTO/auth/sign_up_dto.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class AuthService {
-  static final AuthServiceImpl service = AuthServiceImpl(
-    firebaseAuth: FirebaseAuth.instance,
-    googleSignIn: GoogleSignIn(
-      scopes: [
-        "openid",
-        "email",
-        "profile",
-      ],
-    ),
-  );
-
-  static AuthServiceImpl call() {
-    return service;
-  }
-}
-
-class AuthServiceImpl {
   final FirebaseAuth firebaseAuth;
   final GoogleSignIn googleSignIn;
 
-  AuthServiceImpl({required this.firebaseAuth, required this.googleSignIn});
+  AuthService({
+    FirebaseAuth? firebaseAuth,
+    GoogleSignIn? googleSignIn,
+  })  : firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
+        googleSignIn = googleSignIn ??
+            GoogleSignIn(
+              scopes: [
+                "openid",
+                "email",
+                "profile",
+              ],
+            );
+
+  Stream<User?> get authStateChanges => firebaseAuth.authStateChanges();
 
   Future<void> sendPasswordResetEmail(String email) async {
     await firebaseAuth.sendPasswordResetEmail(email: email);
@@ -55,7 +51,6 @@ class AuthServiceImpl {
         password: dto.password,
       );
 
-      //TODO: set this as variable then hit user verify to Backend;
       _checkUserCredential(credential);
     } catch (e) {
       if (e is FirebaseAuthException) {
@@ -148,9 +143,5 @@ class AuthServiceImpl {
       throw FirebaseAuthException(
           code: 'sign_in_failed', message: 'User not found');
     }
-  }
-
-  AuthServiceImpl call() {
-    return this;
   }
 }

@@ -15,10 +15,10 @@ import 'package:shared/shared.dart';
 
 class MockGoogleSignIn extends Mock implements GoogleSignIn {}
 
-class MockAuthServiceImpl extends AuthServiceImpl {
-  MockAuthServiceImpl({
-    required super.firebaseAuth,
-    required super.googleSignIn,
+class MockAuthService extends Mock implements AuthService {
+  MockAuthService({
+    required firebaseAuth,
+    required googleSignIn,
   });
 }
 
@@ -36,7 +36,7 @@ class MockBuildContext extends Mock implements BuildContext {}
 
 void main() {
   late SignInBloc signInBloc;
-  late MockAuthServiceImpl authService;
+  late MockAuthService authService;
   late MockFirebaseAuth mockFirebaseAuth;
   late MockGoogleSignIn mockGoogleSignIn;
   late MockSignInBloc mockSignInBloc;
@@ -44,7 +44,7 @@ void main() {
   setUp(() {
     mockFirebaseAuth = MockFirebaseAuth();
     mockGoogleSignIn = MockGoogleSignIn();
-    authService = MockAuthServiceImpl(
+    authService = MockAuthService(
         firebaseAuth: mockFirebaseAuth, googleSignIn: mockGoogleSignIn);
     signInBloc = SignInBloc(service: authService);
     mockSignInBloc = MockSignInBloc(service: authService);
@@ -102,7 +102,7 @@ void main() {
 
     testWidgets('BuildSignInForms Widget Test ForgotPassword Success',
         (WidgetTester tester) async {
-      var newAuthService = MockAuthServiceImpl(
+      var newAuthService = MockAuthService(
           firebaseAuth: MockAuth(), googleSignIn: mockGoogleSignIn);
       var newMockSignInBloc = MockSignInBloc(service: newAuthService);
 
@@ -148,7 +148,7 @@ void main() {
 
     testWidgets('BuildSignInForms Widget Test ForgotPassword Failed',
         (WidgetTester tester) async {
-      var newAuthService = MockAuthServiceImpl(
+      var newAuthService = MockAuthService(
           firebaseAuth: MockAuth(), googleSignIn: mockGoogleSignIn);
       var newMockSignInBloc = MockSignInBloc(service: newAuthService);
 
@@ -181,7 +181,7 @@ void main() {
     });
 
     testWidgets('BuildSignInButton Widget Test', (WidgetTester tester) async {
-      var newAuthService = MockAuthServiceImpl(
+      var newAuthService = MockAuthService(
           firebaseAuth: MockAuth(), googleSignIn: mockGoogleSignIn);
       var newMockSignInBloc = MockSignInBloc(service: newAuthService);
 
@@ -234,7 +234,7 @@ void main() {
 
     testWidgets('BuildSignInButton Widget Test Empty Forms',
         (WidgetTester tester) async {
-      var newAuthService = MockAuthServiceImpl(
+      var newAuthService = MockAuthService(
           firebaseAuth: MockAuth(), googleSignIn: mockGoogleSignIn);
       var newMockSignInBloc = MockSignInBloc(service: newAuthService);
 
@@ -360,7 +360,7 @@ void main() {
 
     testWidgets('SignInBlocListener Test Failed Test',
         (WidgetTester tester) async {
-      var newAuthService = MockAuthServiceImpl(
+      var newAuthService = MockAuthService(
           firebaseAuth: MockAuth(), googleSignIn: mockGoogleSignIn);
       var newMockSignInBloc = MockSignInBloc(service: newAuthService);
 
@@ -414,7 +414,7 @@ void main() {
 
     testWidgets('SignInBlocListener Test Failed Forgot Success',
         (WidgetTester tester) async {
-      var newAuthService = MockAuthServiceImpl(
+      var newAuthService = MockAuthService(
           firebaseAuth: MockAuth(), googleSignIn: mockGoogleSignIn);
       var newMockSignInBloc = MockSignInBloc(service: newAuthService);
 
@@ -465,7 +465,7 @@ void main() {
 
     testWidgets('SignInBlocListener Test Failed Forgot Password',
         (WidgetTester tester) async {
-      var newAuthService = MockAuthServiceImpl(
+      var newAuthService = MockAuthService(
           firebaseAuth: MockAuth(), googleSignIn: mockGoogleSignIn);
       var newMockSignInBloc = MockSignInBloc(service: newAuthService);
 
