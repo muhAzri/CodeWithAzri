@@ -314,9 +314,9 @@ void main() {
                     data: MediaQueryData(textScaler: TextScaler.linear(0.5)),
                     child: SignUpScreen(),
                   ),
-              '/onboard': (_) => const Scaffold(
+              '/main': (_) => const Scaffold(
                     body: Center(
-                      child: Text('onboarding'),
+                      child: Text('main'),
                     ),
                   )
             },
@@ -364,9 +364,9 @@ void main() {
                     data: MediaQueryData(textScaler: TextScaler.linear(0.5)),
                     child: SignUpScreen(),
                   ),
-              '/onboard': (_) => const Scaffold(
+              '/main': (_) => const Scaffold(
                     body: Center(
-                      child: Text('onboarding'),
+                      child: Text('main'),
                     ),
                   )
             },

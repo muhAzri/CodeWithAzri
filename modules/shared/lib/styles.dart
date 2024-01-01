@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 const Color backgroundColor = Color(0xff05051E);
+const Color bottomNavBackgroundColor = Color(0xff15162F);
 const Color primaryColor = Color(0xff640EF1);
 const Color whiteColor = Color(0xffffffff);
 const Color grayColor = Color(0xff61647D);

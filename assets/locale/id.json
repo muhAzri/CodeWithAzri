@@ -15,5 +15,9 @@
     "signUpSubtitle": "Buat akun Anda & Enjoy",
     "alreadyHaveAnAccountText": "Sudah memiliki akun? ",
     "formsEmptyMessage": "Harap isi semua kolom formulir",
-    "resetPasswordSended": "Email reset password telah dikirim kepada Anda!"
+    "resetPasswordSended": "Email reset password telah dikirim kepada Anda!",
+    "navBarItemHome": "Beranda",
+    "navBarItemSearch": "Cari",
+    "navBarItemMyCourse": "Kursus Saya",
+    "navBarItemProfile": "Profil"
 }

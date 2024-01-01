@@ -1,4 +1,5 @@
 import 'package:app/app.dart';
+import 'package:app/presentation/screens/main_screen.dart';
 import 'package:auth/auth.dart';
 import 'package:auth/bloc/sign_in/sign_in_bloc.dart';
 import 'package:auth/bloc/sign_up/sign_up_bloc.dart';
@@ -31,6 +32,9 @@ class AppRouter {
                   create: (context) => SignInBloc(),
                   child: SignInScreen(),
                 );
+
+              case AppRoutes.mainScreen:
+                return const MainScreen();
 
               default:
                 return const NamedRouteNotFound();

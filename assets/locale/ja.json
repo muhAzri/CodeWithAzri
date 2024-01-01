@@ -15,6 +15,9 @@
     "signUpSubtitle": "アカウントを作成してお楽しみください",
     "alreadyHaveAnAccountText": "すでにアカウントをお持ちですか？ ",
     "formsEmptyMessage": "すべてのフォームフィールドに記入してください",
-    "resetPasswordSended" : "パスワードのリセットメールが送信されました！"
-
+    "resetPasswordSended": "パスワードのリセットメールが送信されました！",
+    "navBarItemHome": "ホーム",
+    "navBarItemSearch": "検索",
+    "navBarItemMyCourse": "マイコース",
+    "navBarItemProfile": "プロフィール"
 }

@@ -332,9 +332,9 @@ void main() {
                         textScaler: TextScaler.linear(0.5)),
                     child: SignInScreen(),
                   ),
-              '/onboard': (_) => const Scaffold(
+              '/main': (_) => const Scaffold(
                     body: Center(
-                      child: Text('onboarding'),
+                      child: Text('main'),
                     ),
                   )
             },
@@ -384,9 +384,9 @@ void main() {
                         textScaler: TextScaler.linear(0.5)),
                     child: SignInScreen(),
                   ),
-              '/onboard': (_) => const Scaffold(
+              '/main': (_) => const Scaffold(
                     body: Center(
-                      child: Text('onboarding'),
+                      child: Text('main'),
                     ),
                   )
             },
@@ -438,9 +438,9 @@ void main() {
                         textScaler: TextScaler.linear(0.5)),
                     child: SignInScreen(),
                   ),
-              '/onboard': (_) => const Scaffold(
+              '/main': (_) => const Scaffold(
                     body: Center(
-                      child: Text('onboarding'),
+                      child: Text('main'),
                     ),
                   )
             },
@@ -489,9 +489,9 @@ void main() {
                         textScaler: TextScaler.linear(0.5)),
                     child: SignInScreen(),
                   ),
-              '/onboard': (_) => const Scaffold(
+              '/main': (_) => const Scaffold(
                     body: Center(
-                      child: Text('onboarding'),
+                      child: Text('main'),
                     ),
                   )
             },
