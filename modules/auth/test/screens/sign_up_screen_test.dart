@@ -16,7 +16,7 @@ import 'package:networking/services/user_services.dart';
 import 'package:shared/test_assets/localization_test_app.dart';
 import 'package:shared/test_assets/test_app.dart';
 
-enum NavigatorAction { push, pop }
+enum NavigatorAction { push, pop, replaced }
 
 class MockNavigatorObserver extends NavigatorObserver {
   final List<NavigatorAction> history = [];
@@ -25,6 +25,12 @@ class MockNavigatorObserver extends NavigatorObserver {
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
     history.add(NavigatorAction.push);
     super.didPush(route, previousRoute);
+  }
+
+  @override
+  void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) {
+    history.add(NavigatorAction.replaced);
+    super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
   }
 }
 
@@ -246,17 +252,27 @@ void main() {
       final mockObserver = MockNavigatorObserver();
 
       await tester.pumpWidget(
-        LocalizationTestApp(
-          navigatorObservers: [mockObserver],
-          child: Material(
-            child: Builder(builder: (context) {
-              return const SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: BuildHaveAccountButton(),
-              );
-            }),
-          ),
-        ),
+        LocalizationTestApp(navigatorObservers: [
+          mockObserver
+        ], routes: {
+          '/': (_) => Material(
+                child: MediaQuery(
+                  data:
+                      const MediaQueryData(textScaler: TextScaler.linear(0.5)),
+                  child: Builder(builder: (context) {
+                    return const SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: BuildHaveAccountButton(),
+                    );
+                  }),
+                ),
+              ),
+          '/sign-in': (_) => const Scaffold(
+                body: Center(
+                  child: Text("Sign In"),
+                ),
+              )
+        }),
       );
 
       await tester.pumpAndSettle();
@@ -270,7 +286,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(mockObserver.history.contains(NavigatorAction.push), isTrue);
+      expect(mockObserver.history.contains(NavigatorAction.replaced), isTrue);
     });
 
     testWidgets('OrDividerWidget Widget Test', (WidgetTester tester) async {

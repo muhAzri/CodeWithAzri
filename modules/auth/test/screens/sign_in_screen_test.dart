@@ -16,7 +16,7 @@ import 'package:networking/services/user_services.dart';
 import 'package:shared/test_assets/localization_test_app.dart';
 import 'package:shared/test_assets/test_app.dart';
 
-enum NavigatorAction { push, pop }
+enum NavigatorAction { push, pop, replaced }
 
 class MockNavigatorObserver extends NavigatorObserver {
   final List<NavigatorAction> history = [];
@@ -25,6 +25,12 @@ class MockNavigatorObserver extends NavigatorObserver {
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
     history.add(NavigatorAction.push);
     super.didPush(route, previousRoute);
+  }
+
+  @override
+  void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) {
+    history.add(NavigatorAction.replaced);
+    super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
   }
 }
 
@@ -300,18 +306,40 @@ void main() {
 
     testWidgets('BuildCreateAccountButton Widget Test',
         (WidgetTester tester) async {
+      final mockObserver = MockNavigatorObserver();
+
       await tester.pumpWidget(
-        const TestApp(
-          home: Material(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: BuildCreateAccountButton(),
-            ),
-          ),
+        LocalizationTestApp(
+          navigatorObservers: [mockObserver],
+          routes: {
+            '/': (_) => const Material(
+                  child: MediaQuery(
+                    data: MediaQueryData(textScaler: TextScaler.linear(0.5)),
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: BuildCreateAccountButton(),
+                    ),
+                  ),
+                ),
+            '/sign-up': (_) => const Scaffold(
+                  body: Center(
+                    child: Text("Sign Up"),
+                  ),
+                )
+          },
         ),
       );
+
+      await tester.pumpAndSettle();
+
       expect(find.text('dontHaveAnAccountText'), findsOneWidget);
       expect(find.text('signUpButtonLabel'), findsOneWidget);
+
+      await tester.tap(find.byType(InkWell));
+
+      await tester.pumpAndSettle();
+
+      expect(mockObserver.history.contains(NavigatorAction.replaced), isTrue);
     });
 
     testWidgets('SignInScreen Widget Test', (WidgetTester tester) async {
