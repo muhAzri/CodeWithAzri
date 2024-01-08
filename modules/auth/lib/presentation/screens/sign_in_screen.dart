@@ -229,7 +229,6 @@ class BuildCreateAccountButton extends StatelessWidget {
           CustomTextButton(
             label: "signUpButtonLabel".tr(),
             onTap: () {
-              print("ASUUUU");
               Navigator.pushReplacementNamed(context, AppRoutes.signUpScreen);
             },
             labelTextStyle: whiteTextStyle,
