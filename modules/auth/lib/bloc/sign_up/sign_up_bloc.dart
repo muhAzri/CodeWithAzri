@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:models/DTO/auth/sign_up_dto.dart';
+import 'package:models/dto/auth/sign_up_dto.dart';
 import 'package:models/dto/user/user_initialization_dto.dart';
 import 'package:networking/services/auth_services.dart';
 import 'package:networking/services/user_services.dart';

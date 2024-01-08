@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:models/DTO/auth/sign_in_dto.dart';
-import 'package:models/DTO/auth/sign_up_dto.dart';
+import 'package:models/dto/auth/sign_in_dto.dart';
+import 'package:models/dto/auth/sign_up_dto.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class AuthService {
