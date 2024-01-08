@@ -1,47 +1,22 @@
-import 'package:app/app.dart';
-import 'package:auth/auth.dart';
+import 'package:app/presentation/widgets/custom_textform_field.dart';
 import 'package:auth/bloc/sign_up/sign_up_bloc.dart';
+import 'package:auth/presentation/screens/sign_up_screen.dart';
+import 'package:auth/presentation/widgets/or_divider_widget.dart';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:get_it/get_it.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:models/DTO/auth/sign_up_dto.dart';
+import 'package:models/dto/auth/sign_up_dto.dart';
+import 'package:models/dto/user/user_initialization_dto.dart';
 import 'package:networking/services/auth_services.dart';
-import 'package:shared/shared.dart';
+import 'package:networking/services/user_services.dart';
+import 'package:shared/test_assets/localization_test_app.dart';
+import 'package:shared/test_assets/test_app.dart';
 
-class MockGoogleSignIn extends Mock implements GoogleSignIn {
-  MockGoogleSignIn() {
-    when(() => signIn()).thenAnswer((_) async => MockGoogleSignInAccount());
-  }
-}
-
-class MockUser extends Mock implements User {}
-
-class MockAuthService extends Mock implements AuthService {
-  MockAuthService({
-    required firebaseAuth,
-    required googleSignIn,
-  }) {
-    when(() => signUp(any())).thenAnswer((_) async => MockUser());
-  }
-}
-
-class MockSignUpBloc extends Mock implements SignUpBloc {
-  MockSignUpBloc({required service});
-}
-
-class MockGoogleSignInAccount extends Mock implements GoogleSignInAccount {}
-
-class MockFirebaseAuth extends Mock implements FirebaseAuth {}
-
-class MockAuth extends Mock implements MockFirebaseAuth {}
-
-class MockBuildContext extends Mock implements BuildContext {}
-
-enum NavigatorAction { push, pop }
+enum NavigatorAction { push, pop, replaced }
 
 class MockNavigatorObserver extends NavigatorObserver {
   final List<NavigatorAction> history = [];
@@ -51,32 +26,74 @@ class MockNavigatorObserver extends NavigatorObserver {
     history.add(NavigatorAction.push);
     super.didPush(route, previousRoute);
   }
+
+  @override
+  void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) {
+    history.add(NavigatorAction.replaced);
+    super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
+  }
+}
+
+class MockAuthService extends Mock implements AuthService {}
+
+class MockUserService extends Mock implements UserService {}
+
+class MockUser extends Mock implements User {
+  @override
+  final String uid;
+  @override
+  final String displayName;
+  @override
+  final String email;
+
+  MockUser({this.uid = 'id', this.displayName = 'name', this.email = 'email'});
+}
+
+class MockSignUpBloc extends Mock implements SignUpBloc {
+  @override
+  final AuthService services;
+  @override
+  final UserService userService;
+
+  MockSignUpBloc({required this.services, required this.userService}) {
+    when(() => close()).thenAnswer((_) async => {});
+  }
 }
 
 void main() {
   late SignUpBloc signUpBloc;
-  late MockAuthService authService;
-  late MockFirebaseAuth mockFirebaseAuth;
-  late MockGoogleSignIn mockGoogleSignIn;
-
-  setUp(() {
-    mockFirebaseAuth = MockFirebaseAuth();
-    mockGoogleSignIn = MockGoogleSignIn();
-    authService = MockAuthService(
-        firebaseAuth: mockFirebaseAuth, googleSignIn: mockGoogleSignIn);
-
-    signUpBloc = SignUpBloc(service: authService);
-  });
+  late AuthService mockAuthService;
+  late UserService mockUserService;
+  late GetIt getIt;
 
   setUpAll(() {
     registerFallbackValue(
-      const SignUpDTO(
-        name: "Name",
-        email: 'example@example.com',
-        password: '<PASSWORD>',
-      ),
+      const SignUpDTO(name: "name", email: "email", password: "password"),
+    );
+    registerFallbackValue(
+      const UserInitializationDTO(name: "name", email: "email", id: "id"),
     );
   });
+
+  setUp(() {
+    getIt = GetIt.instance;
+    getIt.registerSingleton<AuthService>(MockAuthService());
+    getIt.registerSingleton<UserService>(MockUserService());
+
+    mockAuthService = getIt<AuthService>();
+    mockUserService = getIt<UserService>();
+
+    signUpBloc = MockSignUpBloc(
+      services: mockAuthService,
+      userService: mockUserService,
+    );
+  });
+
+  tearDown(() {
+    signUpBloc.close();
+    getIt.reset();
+  });
+
   group('SignUpScreen Widgets Test', () {
     testWidgets('BuildSignUpHeader Widget Test', (WidgetTester tester) async {
       await tester
@@ -145,12 +162,8 @@ void main() {
       TextEditingController passwordController =
           TextEditingController(text: "Password");
 
-      var newAuthService = MockAuthService(
-          firebaseAuth: MockAuth(), googleSignIn: mockGoogleSignIn);
-      var newMockSignUpBloc = MockSignUpBloc(service: newAuthService);
-
       whenListen(
-        newMockSignUpBloc,
+        signUpBloc,
         Stream.fromIterable([
           SignUpInitial(),
           SignUpLoading(),
@@ -162,7 +175,7 @@ void main() {
       await tester.pumpWidget(
         LocalizationTestApp(
           child: BlocProvider<SignUpBloc>.value(
-            value: newMockSignUpBloc,
+            value: signUpBloc,
             child: Builder(builder: (context) {
               return Material(
                 child: BuildSignUpButton(
@@ -186,7 +199,7 @@ void main() {
       await tester.pumpAndSettle();
 
       verify(
-        () => newMockSignUpBloc.add(
+        () => signUpBloc.add(
           const SignUpRequest(
             dto: SignUpDTO(
               name: "Name",
@@ -239,17 +252,27 @@ void main() {
       final mockObserver = MockNavigatorObserver();
 
       await tester.pumpWidget(
-        LocalizationTestApp(
-          navigatorObservers: [mockObserver],
-          child: Material(
-            child: Builder(builder: (context) {
-              return const SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: BuildHaveAccountButton(),
-              );
-            }),
-          ),
-        ),
+        LocalizationTestApp(navigatorObservers: [
+          mockObserver
+        ], routes: {
+          '/': (_) => Material(
+                child: MediaQuery(
+                  data:
+                      const MediaQueryData(textScaler: TextScaler.linear(0.5)),
+                  child: Builder(builder: (context) {
+                    return const SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: BuildHaveAccountButton(),
+                    );
+                  }),
+                ),
+              ),
+          '/sign-in': (_) => const Scaffold(
+                body: Center(
+                  child: Text("Sign In"),
+                ),
+              )
+        }),
       );
 
       await tester.pumpAndSettle();
@@ -263,7 +286,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(mockObserver.history.contains(NavigatorAction.push), isTrue);
+      expect(mockObserver.history.contains(NavigatorAction.replaced), isTrue);
     });
 
     testWidgets('OrDividerWidget Widget Test', (WidgetTester tester) async {
@@ -271,32 +294,9 @@ void main() {
       expect(find.byType(Divider), findsOneWidget);
     });
 
-    testWidgets('SignUpScreen Widget Test', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Material(
-            child: MediaQuery(
-              // Shrink the text avoid overflow caused by large Ahem font.
-              data: const MediaQueryData(textScaler: TextScaler.linear(0.5)),
-              child: BlocProvider.value(
-                value: signUpBloc,
-                child: const SignUpScreen(),
-              ),
-            ),
-          ),
-        ),
-      );
-
-      expect(find.byType(SingleChildScrollView), findsOneWidget);
-    });
-
     testWidgets('SignUp BlocListener Test', (WidgetTester tester) async {
-      var newAuthService = MockAuthService(
-          firebaseAuth: MockAuth(), googleSignIn: mockGoogleSignIn);
-      var newMockSignUpBloc = MockSignUpBloc(service: newAuthService);
-
       whenListen(
-        newMockSignUpBloc,
+        signUpBloc,
         Stream.fromIterable([
           SignUpInitial(),
           SignUpLoading(),
@@ -307,7 +307,7 @@ void main() {
 
       await tester.pumpWidget(
         BlocProvider<SignUpBloc>.value(
-          value: newMockSignUpBloc,
+          value: signUpBloc,
           child: TestApp(
             routes: {
               '/': (_) => const MediaQuery(
@@ -326,7 +326,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      newMockSignUpBloc.add(
+      signUpBloc.add(
         const SignUpRequest(
           dto: SignUpDTO(
             email: "email",
@@ -341,12 +341,8 @@ void main() {
 
     testWidgets('SignUp BlocListener Test When Failed Occured',
         (WidgetTester tester) async {
-      var newAuthService = MockAuthService(
-          firebaseAuth: MockAuth(), googleSignIn: mockGoogleSignIn);
-      var newMockSignUpBloc = MockSignUpBloc(service: newAuthService);
-
       whenListen(
-        newMockSignUpBloc,
+        signUpBloc,
         Stream.fromIterable([
           SignUpInitial(),
           SignUpLoading(),
@@ -357,7 +353,7 @@ void main() {
 
       await tester.pumpWidget(
         BlocProvider<SignUpBloc>.value(
-          value: newMockSignUpBloc,
+          value: signUpBloc,
           child: TestApp(
             routes: {
               '/': (_) => const MediaQuery(
@@ -376,7 +372,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      newMockSignUpBloc.add(
+      signUpBloc.add(
         const SignUpRequest(
           dto: SignUpDTO(
             email: "email",

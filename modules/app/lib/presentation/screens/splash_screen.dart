@@ -1,46 +1,56 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:locator/locator.dart';
 import 'package:networking/services/auth_services.dart';
 import 'package:shared/shared.dart';
 
 class SplashScreen extends StatefulWidget {
-  final AuthService? authService;
-  const SplashScreen({super.key, this.authService});
+  const SplashScreen({super.key});
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  late AuthService _authService;
+  late StreamSubscription<User?> _authSubscription;
 
   @override
   void initState() {
     super.initState();
-    _authService = widget.authService ?? AuthService();
 
     Future.delayed(const Duration(seconds: 3), () {
-      navigateToNextScreen();
+      if (mounted) {
+        _authSubscription = Locator()
+            .getIt<AuthService>()
+            .authStateChanges
+            .listen((User? user) {
+          navigateToNextScreen(user);
+        });
+      }
     });
   }
 
-  void navigateToNextScreen() {
-    _authService.authStateChanges.listen((User? user) {
-      if (user != null) {
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          AppRoutes.mainScreen,
-          (route) => false,
-        );
-      } else {
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          AppRoutes.onboardScreen,
-          (route) => false,
-        );
-      }
-    });
+  void navigateToNextScreen(User? user) {
+    if (user != null) {
+      Navigator.pushReplacementNamed(
+        context,
+        AppRoutes.mainScreen,
+      );
+    } else {
+      Navigator.pushReplacementNamed(
+        context,
+        AppRoutes.onboardScreen,
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _authSubscription.cancel();
+    super.dispose();
   }
 
   @override

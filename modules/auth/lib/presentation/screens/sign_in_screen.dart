@@ -5,7 +5,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:models/DTO/auth/sign_in_dto.dart';
+import 'package:models/dto/auth/sign_in_dto.dart';
 import 'package:shared/flushbar_utils.dart';
 import 'package:shared/shared.dart';
 
