@@ -4,10 +4,13 @@ import 'package:auth/auth.dart';
 import 'package:auth/bloc/sign_in/sign_in_bloc.dart';
 import 'package:auth/bloc/sign_up/sign_up_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:locator/locator.dart';
 import 'package:shared/shared.dart';
 import 'package:flutter/material.dart';
 
 class AppRouter {
+  final Locator locator = Locator();
+
   Route? onGenerateRoute(RouteSettings settings) {
     return MaterialPageRoute(
       settings: settings,
@@ -23,13 +26,13 @@ class AppRouter {
 
               case AppRoutes.signUpScreen:
                 return BlocProvider(
-                  create: (context) => SignUpBloc(),
+                  create: (context) => locator.getIt<SignUpBloc>(),
                   child: const SignUpScreen(),
                 );
 
               case AppRoutes.signInScreen:
                 return BlocProvider(
-                  create: (context) => SignInBloc(),
+                  create: (context) => locator.getIt<SignInBloc>(),
                   child: SignInScreen(),
                 );
 

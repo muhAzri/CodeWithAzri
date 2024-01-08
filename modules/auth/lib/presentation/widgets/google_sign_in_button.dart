@@ -1,4 +1,5 @@
 import 'package:auth/bloc/sign_in/sign_in_bloc.dart';
+import 'package:auth/bloc/sign_up/sign_up_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -19,6 +20,9 @@ class GoogleSignInButton extends StatelessWidget {
         onTap: () {
           if (bloc == SignInBloc) {
             context.read<SignInBloc>().add(SignInByGoogleRequest());
+          }
+          if (bloc == SignUpBloc) {
+            context.read<SignUpBloc>().add(SignUpByGoogleRequest());
           }
         },
         child: Image.asset(

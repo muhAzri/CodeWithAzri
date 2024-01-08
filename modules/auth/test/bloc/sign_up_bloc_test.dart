@@ -2,80 +2,77 @@ import 'package:auth/bloc/sign_up/sign_up_bloc.dart';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:get_it/get_it.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:models/DTO/auth/sign_up_dto.dart';
+import 'package:models/dto/user/user_initialization_dto.dart';
 import 'package:networking/services/auth_services.dart';
+import 'package:networking/services/user_services.dart';
 
-class MockGoogleSignIn extends Mock implements GoogleSignIn {
-  MockGoogleSignIn() {
-    when(() => signIn()).thenAnswer((_) async => MockGoogleSignInAccount());
-  }
+class MockAuthService extends Mock implements AuthService {}
+
+// Mock UserService
+class MockUserService extends Mock implements UserService {}
+
+class MockUser extends Mock implements User {
+  @override
+  final String uid;
+  @override
+  final String displayName;
+  @override
+  final String email;
+
+  MockUser({this.uid = 'id', this.displayName = 'name', this.email = 'email'});
 }
-
-class MockUser extends Mock implements User {}
-
-class MockAuthService extends Mock implements AuthService {
-  MockAuthService({
-    required firebaseAuth,
-    required googleSignIn,
-  }) {
-    when(() => signUp(any())).thenAnswer((_) async => MockUser());
-  }
-}
-
-class MockSignUpBloc extends Mock implements SignUpBloc {
-  MockSignUpBloc({required service});
-}
-
-class MockGoogleSignInAccount extends Mock implements GoogleSignInAccount {}
-
-class MockFirebaseAuth extends Mock implements FirebaseAuth {}
 
 void main() {
   late SignUpBloc signUpBloc;
-  late MockAuthService authService;
-  late MockFirebaseAuth mockFirebaseAuth;
-  late MockGoogleSignIn mockGoogleSignIn;
-
-  setUp(() {
-    mockFirebaseAuth = MockFirebaseAuth();
-    mockGoogleSignIn = MockGoogleSignIn();
-    authService = MockAuthService(
-        firebaseAuth: mockFirebaseAuth, googleSignIn: mockGoogleSignIn);
-    signUpBloc = SignUpBloc(service: authService);
-  });
+  late AuthService mockAuthService;
+  late UserService mockUserService;
+  late GetIt getIt;
 
   setUpAll(() {
     registerFallbackValue(
-      const SignUpDTO(
-        name: "Name",
-        email: 'example@example.com',
-        password: '<PASSWORD>',
-      ),
+      const SignUpDTO(name: "name", email: "email", password: "password"),
+    );
+    registerFallbackValue(
+      const UserInitializationDTO(name: "name", email: "email", id: "id"),
+    );
+  });
+
+  setUp(() {
+    getIt = GetIt.instance;
+    getIt.registerSingleton<AuthService>(MockAuthService());
+    getIt.registerSingleton<UserService>(MockUserService());
+
+    mockAuthService = getIt<AuthService>();
+    mockUserService = getIt<UserService>();
+
+    signUpBloc = SignUpBloc(
+      services: mockAuthService,
+      userService: mockUserService,
     );
   });
 
   tearDown(() {
     signUpBloc.close();
-    resetMocktailState();
+    getIt.reset();
   });
-  group("SignUp Bloc Test", () {
-    const signUpDTO = SignUpDTO(
-        name: "Name", email: 'example@example.com', password: '<PASSWORD>');
+
+  group("Sign Up Bloc Test", () {
+    SignUpDTO signUpDTO =
+        const SignUpDTO(name: "name", email: "email", password: "password");
 
     blocTest<SignUpBloc, SignUpState>(
-      'emits [SignUpLoading, SignUpSuccess] when SignUpRequest is added successfully',
+      "emits [SignUpLoading, SignUpSuccess] when SignUpRequest is added successfully",
       build: () {
-        when(
-          () => authService.signUp(
-            signUpDTO,
-          ),
-        ).thenAnswer((_) async => MockUser());
-
+        when(() => mockAuthService.signUp(any()))
+            .thenAnswer((_) async => MockUser());
+        when(() => mockUserService.initializeUser(any()))
+            .thenAnswer((_) async {});
         return signUpBloc;
       },
-      act: (bloc) => bloc.add(const SignUpRequest(dto: signUpDTO)),
+      act: (bloc) => bloc.add(SignUpRequest(dto: signUpDTO)),
       expect: () => [
         SignUpLoading(),
         SignUpSuccess(),
@@ -83,32 +80,48 @@ void main() {
     );
 
     blocTest<SignUpBloc, SignUpState>(
-      'emits [SignUpLoading, SignUpFailed] when SignUpRequest is added and fails',
+      "emits [SignUpLoading, SignUpFailed] when signupService throws an exception",
       build: () {
-        when(
-          () => authService.signUp(
-            // email: "email",
-            // password: "password",
-            signUpDTO,
+        when(() => mockAuthService.signUp(any())).thenThrow(
+          FirebaseException(
+            plugin: "FirebaseAuthException",
+            message: "Failed To Sign Up",
           ),
-        ).thenAnswer((_) async => throw 'Sign Up Failed');
-
+        );
+        when(() => mockUserService.initializeUser(any()))
+            .thenAnswer((_) async {});
         return signUpBloc;
       },
-      act: (bloc) => bloc.add(const SignUpRequest(dto: signUpDTO)),
+      act: (bloc) => bloc.add(SignUpRequest(dto: signUpDTO)),
       expect: () => [
         SignUpLoading(),
-        const SignUpFailed(error: 'Sign Up Failed'),
+        const SignUpFailed(error: "Failed To Sign Up"),
       ],
     );
 
     blocTest<SignUpBloc, SignUpState>(
-      'emits [SignUpLoading, SignUpSuccess] when SignUpByGoogleRequest is added successfully',
+      "emits [SignUpLoading, SignUpFailed] when Initialize User Service throws an exception",
       build: () {
-        when(
-          () => authService.signInWithGoogle(),
-        ).thenAnswer((_) async => MockUser());
+        when(() => mockAuthService.signUp(any()))
+            .thenAnswer((_) async => MockUser());
+        when(() => mockUserService.initializeUser(any()))
+            .thenThrow("Internal Server Error");
+        return signUpBloc;
+      },
+      act: (bloc) => bloc.add(SignUpRequest(dto: signUpDTO)),
+      expect: () => [
+        SignUpLoading(),
+        const SignUpFailed(error: "Internal Server Error"),
+      ],
+    );
 
+    blocTest<SignUpBloc, SignUpState>(
+      "emits [SignUpLoading, SignUpSuccess] when SignUpByGoogleRequest is added successfully",
+      build: () {
+        when(() => mockAuthService.signInWithGoogle())
+            .thenAnswer((_) async => MockUser());
+        when(() => mockUserService.initializeUser(any()))
+            .thenAnswer((_) async {});
         return signUpBloc;
       },
       act: (bloc) => bloc.add(SignUpByGoogleRequest()),
@@ -119,26 +132,39 @@ void main() {
     );
 
     blocTest<SignUpBloc, SignUpState>(
-      'emits [SignUpLoading, SignUpFailed] when SignUpByGoogleRequest is added and fails',
+      "emits [SignUpLoading, SignUpFailed] when signInWithGoogle is Throw Error",
       build: () {
-        when(
-          () => authService.signInWithGoogle(),
-        ).thenAnswer((_) async => throw 'Sign Up Failed');
-
+        when(() => mockAuthService.signInWithGoogle()).thenThrow(
+          FirebaseException(
+            plugin: "FirebaseAuthException",
+            message: "Failed To Sign Up",
+          ),
+        );
+        when(() => mockUserService.initializeUser(any()))
+            .thenAnswer((_) async {});
         return signUpBloc;
       },
       act: (bloc) => bloc.add(SignUpByGoogleRequest()),
       expect: () => [
         SignUpLoading(),
-        const SignUpFailed(error: 'Sign Up Failed'),
+        const SignUpFailed(error: "Failed To Sign Up"),
       ],
     );
 
-    test('should initialize services with provided AuthService', () {
-      final mockAuthService = authService;
-      final signUpBloc = SignUpBloc(service: mockAuthService);
-
-      expect(signUpBloc.services, equals(mockAuthService));
-    });
+    blocTest<SignUpBloc, SignUpState>(
+      "emits [SignUpLoading, SignUpFailed] SignUpWithGoogle when Initialize User Service is Throw Error",
+      build: () {
+        when(() => mockAuthService.signInWithGoogle())
+            .thenAnswer((_) async => MockUser());
+        when(() => mockUserService.initializeUser(any()))
+            .thenThrow("Internal Server Error");
+        return signUpBloc;
+      },
+      act: (bloc) => bloc.add(SignUpByGoogleRequest()),
+      expect: () => [
+        SignUpLoading(),
+        const SignUpFailed(error: "Internal Server Error"),
+      ],
+    );
   });
 }

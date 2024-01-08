@@ -9,17 +9,9 @@ class AuthService {
   final GoogleSignIn googleSignIn;
 
   AuthService({
-    FirebaseAuth? firebaseAuth,
-    GoogleSignIn? googleSignIn,
-  })  : firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
-        googleSignIn = googleSignIn ??
-            GoogleSignIn(
-              scopes: [
-                "openid",
-                "email",
-                "profile",
-              ],
-            );
+    required this.firebaseAuth,
+    required this.googleSignIn,
+  });
 
   Stream<User?> get authStateChanges => firebaseAuth.authStateChanges();
 
@@ -43,7 +35,7 @@ class AuthService {
     }
   }
 
-  Future<void> signInWithEmailAndPassword(SignInDTO dto) async {
+  Future<User> signInWithEmailAndPassword(SignInDTO dto) async {
     try {
       final UserCredential credential =
           await firebaseAuth.signInWithEmailAndPassword(
@@ -51,7 +43,7 @@ class AuthService {
         password: dto.password,
       );
 
-      _checkUserCredential(credential);
+      return _checkUserCredential(credential);
     } catch (e) {
       if (e is FirebaseAuthException) {
         throw "${e.message}";
@@ -79,29 +71,22 @@ class AuthService {
 
     final GoogleSignInAuthentication googleAuth =
         await googleUser.authentication;
-    if (googleAuth.accessToken == null || googleAuth.idToken == null) {
-      final user = await _signInWithGoogleCredentials(
-        googleAuth.accessToken!,
-        googleAuth.idToken!,
+
+    if (googleAuth.accessToken != null && googleAuth.idToken != null) {
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken!,
+        idToken: googleAuth.idToken!,
       );
-      return _checkUser(user);
+
+      final UserCredential userCredential =
+          await firebaseAuth.signInWithCredential(credential);
+      return _checkUserCredential(userCredential);
     }
 
     throw FirebaseAuthException(
       code: 'sign_in_failed',
       message: 'Sign in failed',
     );
-  }
-
-  Future<User?> _signInWithGoogleCredentials(
-      String accessToken, String idToken) async {
-    final AuthCredential credential = GoogleAuthProvider.credential(
-      accessToken: accessToken,
-      idToken: idToken,
-    );
-    final UserCredential userCredential =
-        await firebaseAuth.signInWithCredential(credential);
-    return userCredential.user;
   }
 
   Future<User> signInWithApple() async {
@@ -112,33 +97,19 @@ class AuthService {
         AppleIDAuthorizationScopes.fullName
       ],
     );
-    final user = await _signInWithAppleCredentials(appleCredential);
-    return _checkUser(user);
-  }
 
-  Future<User?> _signInWithAppleCredentials(
-      AuthorizationCredentialAppleID credential) async {
     final OAuthCredential oAuthCredential =
         OAuthProvider("apple.com").credential(
-      idToken: credential.identityToken,
+      idToken: appleCredential.identityToken,
     );
     final UserCredential userCredential =
         await firebaseAuth.signInWithCredential(oAuthCredential);
-    return userCredential.user;
+    return _checkUserCredential(userCredential);
   }
 
   User _checkUserCredential(UserCredential credential) {
     if (credential.user != null) {
       return credential.user!;
-    } else {
-      throw FirebaseAuthException(
-          code: 'sign_in_failed', message: 'User not found');
-    }
-  }
-
-  User _checkUser(User? user) {
-    if (user != null) {
-      return user;
     } else {
       throw FirebaseAuthException(
           code: 'sign_in_failed', message: 'User not found');

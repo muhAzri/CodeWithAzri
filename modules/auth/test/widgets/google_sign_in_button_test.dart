@@ -1,37 +1,74 @@
 import 'package:auth/auth.dart';
 import 'package:auth/bloc/sign_in/sign_in_bloc.dart';
 import 'package:bloc_test/bloc_test.dart';
-import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:get_it/get_it.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:models/dto/user/user_initialization_dto.dart';
 import 'package:networking/services/auth_services.dart';
+import 'package:networking/services/user_services.dart';
 
-class MockGoogleSignIn extends Mock implements GoogleSignIn {}
+class MockAuthService extends Mock implements AuthService {}
 
-class MockAuthService extends Mock implements AuthService {
-  MockAuthService({
-     firebaseAuth,
-     googleSignIn,
-  });
+class MockUserService extends Mock implements UserService {}
+
+class MockUser extends Mock implements User {
+  @override
+  final String uid;
+  @override
+  final String displayName;
+  @override
+  final String email;
+
+  MockUser({this.uid = 'id', this.displayName = 'name', this.email = 'email'});
 }
 
 class MockSignInBloc extends Mock implements SignInBloc {
-  MockSignInBloc({required service}) {
-    // Mock the close method to return a non-null Future.
-    when(() => close()).thenAnswer((_) async {});
-    // Mock any other methods you need here.
+  @override
+  final AuthService services;
+  @override
+  final UserService userService;
+
+  MockSignInBloc({required this.services, required this.userService}) {
+    when(() => close()).thenAnswer((_) async => {});
   }
 }
 
-class MockAuth extends Mock implements MockFirebaseAuth {}
-
-class MockBuildContext extends Mock implements BuildContext {}
-
 void main() {
+  late SignInBloc signInBloc;
+  late AuthService mockAuthService;
+  late UserService mockUserService;
+  late GetIt getIt;
+
+  setUpAll(() {
+    registerFallbackValue(
+      const UserInitializationDTO(name: "name", email: "email", id: "id"),
+    );
+  });
+
+  setUp(() {
+    getIt = GetIt.instance;
+    getIt.registerSingleton<AuthService>(MockAuthService());
+    getIt.registerSingleton<UserService>(MockUserService());
+
+    mockAuthService = getIt<AuthService>();
+    mockUserService = getIt<UserService>();
+
+    signInBloc = MockSignInBloc(
+      services: mockAuthService,
+      userService: mockUserService,
+    );
+  });
+
+  tearDown(() {
+    signInBloc.close();
+    getIt.reset();
+  });
+
   group('GoogleSignInButton tests', () {
     testWidgets('Widget renders correctly', (WidgetTester tester) async {
       await tester.pumpWidget(
@@ -86,12 +123,8 @@ void main() {
 
     testWidgets('Widget onTap callback is call Bloc Event Correctly',
         (WidgetTester tester) async {
-      var newAuthService = MockAuthService(
-          firebaseAuth: MockAuth(), googleSignIn: MockGoogleSignIn());
-      var newMockSignInBloc = MockSignInBloc(service: newAuthService);
-
       whenListen(
-        newMockSignInBloc,
+        signInBloc,
         Stream.fromIterable([
           SignInInitial(),
           SignInLoading(),
@@ -103,7 +136,7 @@ void main() {
       await tester.pumpWidget(
         TestApp(
           home: BlocProvider<SignInBloc>(
-            create: (context) => newMockSignInBloc,
+            create: (context) => signInBloc,
             child: const Scaffold(
               body: GoogleSignInButton(
                 bloc: SignInBloc,
@@ -121,7 +154,7 @@ void main() {
       await tester.pumpAndSettle();
 
       verify(
-        () => newMockSignInBloc.add(SignInByGoogleRequest()),
+        () => signInBloc.add(SignInByGoogleRequest()),
       ).called(1);
 
       await tester.pumpAndSettle();

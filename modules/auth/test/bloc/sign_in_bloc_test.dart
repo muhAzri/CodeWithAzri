@@ -1,154 +1,196 @@
 import 'package:auth/bloc/sign_in/sign_in_bloc.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
-import 'package:flutter_test/flutter_test.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:bloc_test/bloc_test.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:get_it/get_it.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:models/DTO/auth/sign_in_dto.dart';
+import 'package:models/dto/user/user_initialization_dto.dart';
 import 'package:networking/services/auth_services.dart';
+import 'package:networking/services/user_services.dart';
 
-class MockGoogleSignIn extends Mock implements GoogleSignIn {
-  MockGoogleSignIn() {
-    when(() => signIn()).thenAnswer((_) async => MockGoogleSignInAccount());
-  }
+class MockAuthService extends Mock implements AuthService {}
+
+class MockUserService extends Mock implements UserService {}
+
+class MockUser extends Mock implements User {
+  @override
+  final String uid;
+  @override
+  final String displayName;
+  @override
+  final String email;
+
+  MockUser({this.uid = 'id', this.displayName = 'name', this.email = 'email'});
 }
-
-class MockAuthService extends AuthService {
-  MockAuthService({
-    required super.firebaseAuth,
-    required super.googleSignIn,
-  });
-}
-
-class MockAuth extends Mock implements MockFirebaseAuth {}
-
-class MockSignInBloc extends Mock implements SignInBloc {
-  MockSignInBloc({required service}) {
-    // Mock the close method to return a non-null Future.
-    when(() => close()).thenAnswer((_) async {});
-    // Mock any other methods you need here.
-  }
-}
-
-class MockGoogleSignInAccount extends Mock implements GoogleSignInAccount {}
-
-class MockUserCredential extends Mock implements UserCredential {}
 
 void main() {
   late SignInBloc signInBloc;
-  late MockAuthService authService;
-  late MockFirebaseAuth mockFirebaseAuth;
-  late MockGoogleSignIn mockGoogleSignIn;
+  late AuthService mockAuthService;
+  late UserService mockUserService;
+  late GetIt getIt;
+
+  setUpAll(() {
+    registerFallbackValue(
+      const SignInDTO(email: "email", password: "password"),
+    );
+    registerFallbackValue(
+      const UserInitializationDTO(name: "name", email: "email", id: "id"),
+    );
+  });
 
   setUp(() {
-    mockFirebaseAuth = MockFirebaseAuth();
-    mockGoogleSignIn = MockGoogleSignIn();
-    authService = MockAuthService(
-        firebaseAuth: mockFirebaseAuth, googleSignIn: mockGoogleSignIn);
-    signInBloc = SignInBloc(service: authService);
+    getIt = GetIt.instance;
+    getIt.registerSingleton<AuthService>(MockAuthService());
+    getIt.registerSingleton<UserService>(MockUserService());
+
+    mockAuthService = getIt<AuthService>();
+    mockUserService = getIt<UserService>();
+
+    signInBloc = SignInBloc(
+      services: mockAuthService,
+      userService: mockUserService,
+    );
   });
 
   tearDown(() {
     signInBloc.close();
-    resetMocktailState();
+    getIt.reset();
   });
 
-  group('SignInBloc', () {
-    const signInDTO =
-        SignInDTO(email: 'example@example.com', password: '<PASSWORD>');
-    const email = 'example@example.com';
+  group("Sign In Bloc Test", () {
+    SignInDTO signInDTO = const SignInDTO(
+      email: "email",
+      password: "password",
+    );
 
-    blocTest<SignInBloc, SignInState>(
-      'emits [SignInLoading, SignInSuccess] when SignInRequest is added successfully',
+    blocTest(
+      "emits [SignInLoading, SignInSuccess] when SignInRequest is added successfully",
       build: () {
-        when(() async => await mockFirebaseAuth.signInWithEmailAndPassword(
-              email: signInDTO.email,
-              password: signInDTO.password,
-            ));
+        when(() => mockAuthService.signInWithEmailAndPassword(any()))
+            .thenAnswer(
+          (_) async => MockUser(),
+        );
 
         return signInBloc;
       },
-      act: (bloc) => bloc.add(const SignInRequest(signInDTO: signInDTO)),
+      act: (bloc) => bloc.add(SignInRequest(signInDTO: signInDTO)),
       expect: () => [
         SignInLoading(),
         SignInSuccess(),
       ],
     );
 
-    blocTest<SignInBloc, SignInState>(
-      'emits [SignInLoading, SignInFailed] when ForgotPasswordRequest is added failed',
+    blocTest(
+      "emits [SignInLoading, SignInFailed] when signInService throws an exception",
       build: () {
-        when(() => MockAuth().signInWithEmailAndPassword(
-              email: signInDTO.email,
-              password: signInDTO.password,
-            )).thenThrow(Exception('Failed to sign in'));
+        when(() => mockAuthService.signInWithEmailAndPassword(any())).thenThrow(
+          FirebaseException(
+            plugin: "FirebaseAuthException",
+            message: "Failed To Sign In",
+          ),
+        );
 
-        var newAuthService = MockAuthService(
-            firebaseAuth: MockAuth(), googleSignIn: mockGoogleSignIn);
-        return SignInBloc(service: newAuthService);
+        return signInBloc;
       },
-      act: (bloc) => bloc.add(const SignInRequest(signInDTO: signInDTO)),
+      act: (bloc) => bloc.add(SignInRequest(signInDTO: signInDTO)),
       expect: () => [
         SignInLoading(),
-        const SignInFailed(error: "Excception: 'Failed to sign in'"),
+        const SignInFailed(error: "Failed To Sign In"),
       ],
     );
 
-    blocTest<SignInBloc, SignInState>(
-      'emits [ForgotPasswordLoading, ForgotPasswordSuccess] when ForgotPasswordRequest is added successfully',
+    blocTest(
+      "emits [SignInLoading, SignInSuccess] when SignInByGoogleRequest is added successfully",
       build: () {
-        when(() async =>
-            await mockFirebaseAuth.sendPasswordResetEmail(email: email));
+        when(() => mockAuthService.signInWithGoogle()).thenAnswer(
+          (_) async => MockUser(),
+        );
+        when(() => mockUserService.initializeUser(any()))
+            .thenAnswer((_) async {});
+
         return signInBloc;
       },
-      act: (bloc) => bloc.add(const ForgotPasswordRequest(email: email)),
+      act: (bloc) => bloc.add(SignInByGoogleRequest()),
+      expect: () => [
+        SignInLoading(),
+        SignInSuccess(),
+      ],
+    );
+
+    blocTest(
+      "emits [SignInLoading, SignInSuccess] when SignInByGoogleRequest throws an exception",
+      build: () {
+        when(() => mockAuthService.signInWithGoogle()).thenThrow(
+          FirebaseException(
+            plugin: "FirebaseAuthException",
+            message: "Failed To Sign In",
+          ),
+        );
+        when(() => mockUserService.initializeUser(any()))
+            .thenAnswer((_) async {});
+
+        return signInBloc;
+      },
+      act: (bloc) => bloc.add(SignInByGoogleRequest()),
+      expect: () => [
+        SignInLoading(),
+        const SignInFailed(error: "Failed To Sign In"),
+      ],
+    );
+
+    blocTest(
+      "emits [SignInLoading, SignInSuccess] when SignInByGoogleRequest userinitialization throws an exception",
+      build: () {
+        when(() => mockAuthService.signInWithGoogle()).thenAnswer(
+          (_) async => MockUser(),
+        );
+        when(() => mockUserService.initializeUser(any()))
+            .thenThrow("Internal Server Error");
+
+        return signInBloc;
+      },
+      act: (bloc) => bloc.add(SignInByGoogleRequest()),
+      expect: () => [
+        SignInLoading(),
+        const SignInFailed(error: "Internal Server Error"),
+      ],
+    );
+
+    blocTest(
+      "emits [ForgotPasswordLoading,ForgotPasswordSuccess] when ForgotPasswordRequest is added successfully",
+      build: () {
+        when(() => mockAuthService.sendPasswordResetEmail(any()))
+            .thenAnswer((_) async {});
+
+        return signInBloc;
+      },
+      act: (bloc) => bloc.add(const ForgotPasswordRequest(email: "email")),
       expect: () => [
         ForgotPasswordLoading(),
         ForgotPasswordSuccess(),
       ],
     );
 
-    blocTest<SignInBloc, SignInState>(
-      'emits [ForgotPasswordLoading, ForgotPasswordSuccess] when ForgotPasswordRequest is failed',
+    blocTest(
+      "emits [ForgotPasswordLoading,ForgotPasswordFailed] when ForgotPasswordRequest is failed",
       build: () {
-        when(() => MockAuth().sendPasswordResetEmail(email: email))
-            .thenThrow(Exception('Failed to send password reset email'));
+        when(() => mockAuthService.sendPasswordResetEmail(any())).thenThrow(
+          FirebaseException(
+            plugin: "FirebaseAuthException",
+            message: "Failed To Send Reset Password Email",
+          ),
+        );
 
-        var newAuthService = MockAuthService(
-            firebaseAuth: MockAuth(), googleSignIn: mockGoogleSignIn);
-        return SignInBloc(service: newAuthService);
+        return signInBloc;
       },
-      act: (bloc) => bloc.add(const ForgotPasswordRequest(email: email)),
+      act: (bloc) => bloc.add(const ForgotPasswordRequest(email: "email")),
       expect: () => [
         ForgotPasswordLoading(),
         const ForgotPasswordFailed(
-            error: "Excception: 'Failed to send password reset email'"),
+          error: "Failed To Send Reset Password Email",
+        ),
       ],
     );
-
-    blocTest<SignInBloc, SignInState>(
-      'emits [SignInLoading, SignInFailed] when signInWithGoogle is failed',
-      build: () {
-        var newAuthService = MockAuthService(
-            firebaseAuth: MockAuth(), googleSignIn: mockGoogleSignIn);
-        when(() => mockGoogleSignIn.signIn())
-            .thenAnswer((_) => Future.value(MockGoogleSignInAccount()));
-
-        return SignInBloc(service: newAuthService);
-      },
-      act: (bloc) => bloc.add(SignInByGoogleRequest()),
-      expect: () => [
-        SignInLoading(),
-        const SignInFailed(error: ''),
-      ],
-    );
-
-    test('should initialize services with provided AuthService', () {
-      final mockAuthService = authService;
-      final signInBloc = SignInBloc(service: mockAuthService);
-
-      expect(signInBloc.services, equals(mockAuthService));
-    });
   });
 }

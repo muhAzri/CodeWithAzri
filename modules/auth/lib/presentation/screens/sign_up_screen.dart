@@ -41,7 +41,9 @@ class SignUpScreen extends StatelessWidget {
                   BuildSignUpForms(),
                   BuildHaveAccountButton(),
                   OrDividerWidget(),
-                  OAuthSignInButton(),
+                  OAuthSignInButton(
+                    bloc: SignUpBloc,
+                  ),
                 ],
               ),
             ),
