@@ -64,6 +64,23 @@ void main() {
       password: "password",
     );
 
+    test("SignInEvent instances with same type are equal", () {
+      const event1 = SignInRequest(
+          signInDTO: SignInDTO(email: "email", password: "password"));
+      const event2 = SignInRequest(
+          signInDTO: SignInDTO(email: "email", password: "password"));
+
+      expect(event1, equals(event2));
+    });
+
+    test("SignInEvent instances with same type are not equal", () {
+      const event1 = SignInRequest(
+          signInDTO: SignInDTO(email: "email", password: "password"));
+      final event2 = SignInByGoogleRequest();
+
+      expect(event1, isNot(equals(event2)));
+    });
+
     blocTest(
       "emits [SignInLoading, SignInSuccess] when SignInRequest is added successfully",
       build: () {

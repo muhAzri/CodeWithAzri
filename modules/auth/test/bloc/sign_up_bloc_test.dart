@@ -11,7 +11,6 @@ import 'package:networking/services/user_services.dart';
 
 class MockAuthService extends Mock implements AuthService {}
 
-// Mock UserService
 class MockUserService extends Mock implements UserService {}
 
 class MockUser extends Mock implements User {
@@ -62,6 +61,23 @@ void main() {
   group("Sign Up Bloc Test", () {
     SignUpDTO signUpDTO =
         const SignUpDTO(name: "name", email: "email", password: "password");
+
+    test("SignUpEvent instances with same type are equal", () {
+      const event1 = SignUpRequest(
+          dto: SignUpDTO(name: "name", email: "email", password: "password"));
+      const event2 = SignUpRequest(
+          dto: SignUpDTO(name: "name", email: "email", password: "password"));
+
+      expect(event1, equals(event2));
+    });
+
+    test("SignUpEvent instances with same type are not equal", () {
+      const event1 = SignUpRequest(
+          dto: SignUpDTO(name: "name", email: "email", password: "password"));
+      final event2 = SignUpByGoogleRequest();
+
+      expect(event1, isNot(equals(event2)));
+    });
 
     blocTest<SignUpBloc, SignUpState>(
       "emits [SignUpLoading, SignUpSuccess] when SignUpRequest is added successfully",

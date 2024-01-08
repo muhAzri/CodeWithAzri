@@ -1,5 +1,6 @@
 import 'package:auth/auth.dart';
 import 'package:auth/bloc/sign_in/sign_in_bloc.dart';
+import 'package:auth/bloc/sign_up/sign_up_bloc.dart';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -38,8 +39,20 @@ class MockSignInBloc extends Mock implements SignInBloc {
   }
 }
 
+class MockSignUpBloc extends Mock implements SignUpBloc {
+  @override
+  final AuthService services;
+  @override
+  final UserService userService;
+
+  MockSignUpBloc({required this.services, required this.userService}) {
+    when(() => close()).thenAnswer((_) async => {});
+  }
+}
+
 void main() {
   late SignInBloc signInBloc;
+  late SignUpBloc signUpBloc;
   late AuthService mockAuthService;
   late UserService mockUserService;
   late GetIt getIt;
@@ -59,6 +72,10 @@ void main() {
     mockUserService = getIt<UserService>();
 
     signInBloc = MockSignInBloc(
+      services: mockAuthService,
+      userService: mockUserService,
+    );
+    signUpBloc = MockSignUpBloc(
       services: mockAuthService,
       userService: mockUserService,
     );
@@ -121,7 +138,48 @@ void main() {
       expect(containerWidget.margin, equals(const EdgeInsets.all(20.0)));
     });
 
-    testWidgets('Widget onTap callback is call Bloc Event Correctly',
+    testWidgets(
+        'Widget onTap callback is call Bloc Event Correctly SignIn Bloc',
+        (WidgetTester tester) async {
+      whenListen(
+        signUpBloc,
+        Stream.fromIterable([
+          SignUpInitial(),
+          SignUpLoading(),
+          SignUpSuccess(),
+        ]),
+        initialState: SignUpInitial(),
+      );
+
+      await tester.pumpWidget(
+        TestApp(
+          home: BlocProvider<SignUpBloc>(
+            create: (context) => signUpBloc,
+            child: const Scaffold(
+              body: GoogleSignInButton(
+                bloc: SignUpBloc,
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      final inkWellFinder = find.byType(InkWell);
+      await tester.tap(inkWellFinder, warnIfMissed: false);
+
+      await tester.pumpAndSettle();
+
+      verify(
+        () => signUpBloc.add(SignUpByGoogleRequest()),
+      ).called(1);
+
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets(
+        'Widget onTap callback is call Bloc Event Correctly SignUp Bloc',
         (WidgetTester tester) async {
       whenListen(
         signInBloc,

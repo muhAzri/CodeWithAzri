@@ -78,10 +78,45 @@ void main() {
       expect(find.byType(Container), findsOneWidget);
     });
 
-    testWidgets('SplashScreen navigation test signin',
+    testWidgets('SplashScreen navigation test signin Authenticated',
         (WidgetTester tester) async {
       when(() => mockAuthService.authStateChanges)
           .thenAnswer((_) => Stream<MockUser?>.value(MockUser()));
+
+      await tester.pumpWidget(
+        ScreenUtilInit(
+          designSize: const Size(393, 847),
+          child: MaterialApp(
+            navigatorObservers: [mockObserver],
+            routes: {
+              '/': (_) => const SplashScreen(),
+              MockRoutes.onboardScreen: (_) => Container(),
+              MockRoutes.mainScreen: (_) => Container(),
+            },
+            onUnknownRoute: (settings) {
+              return MaterialPageRoute<void>(
+                builder: (_) => Container(),
+              );
+            },
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      expect(find.byType(Image), findsOneWidget);
+
+      await tester.pump(const Duration(seconds: 3));
+
+      await tester.pumpAndSettle();
+
+      expect(find.byType(Container), findsOneWidget);
+    });
+
+    testWidgets('SplashScreen navigation test signin Unauthenticated',
+        (WidgetTester tester) async {
+      when(() => mockAuthService.authStateChanges)
+          .thenAnswer((_) => Stream<MockUser?>.value(null));
 
       await tester.pumpWidget(
         ScreenUtilInit(
