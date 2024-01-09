@@ -16,7 +16,14 @@ class AuthService {
   Stream<User?> get authStateChanges => firebaseAuth.authStateChanges();
 
   Future<void> sendPasswordResetEmail(String email) async {
-    await firebaseAuth.sendPasswordResetEmail(email: email);
+    try {
+      await firebaseAuth.sendPasswordResetEmail(email: email);
+    } catch (e) {
+      if (e is FirebaseAuthException) {
+        throw "${e.message}";
+      }
+      rethrow;
+    }
   }
 
   Future<User> signUp(SignUpDTO dto) async {
