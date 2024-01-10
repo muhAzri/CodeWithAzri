@@ -4,8 +4,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class LocalizationTestApp extends StatelessWidget {
   final Widget? child;
+  final List<NavigatorObserver>? navigatorObservers;
   final Map<String, Widget Function(BuildContext)>? routes;
-  const LocalizationTestApp({super.key, this.child, this.routes});
+  const LocalizationTestApp(
+      {super.key, this.child, this.routes, this.navigatorObservers});
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +24,7 @@ class LocalizationTestApp extends StatelessWidget {
       child: ScreenUtilInit(
         designSize: const Size(393, 847),
         child: MaterialApp(
+          navigatorObservers: navigatorObservers ?? const <NavigatorObserver>[],
           home: child,
           routes: routes ?? const <String, WidgetBuilder>{},
         ),

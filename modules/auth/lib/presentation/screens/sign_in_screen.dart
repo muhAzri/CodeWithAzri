@@ -1,32 +1,64 @@
 import 'package:app/app.dart';
 import 'package:auth/auth.dart';
+import 'package:auth/bloc/sign_in/sign_in_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:models/dto/auth/sign_in_dto.dart';
+import 'package:shared/flushbar_utils.dart';
 import 'package:shared/shared.dart';
 
 class SignInScreen extends StatelessWidget {
-  const SignInScreen({super.key});
+  final TextEditingController emailController = TextEditingController(text: '');
+  final TextEditingController passwordController =
+      TextEditingController(text: '');
+  SignInScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: backgroundColor,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: 25.w,
-            ),
-            child: const Column(
-              children: [
-                BuildSignInHeader(),
-                BuildSignInForms(),
-                BuildSignInButton(),
-                BuildCreateAccountButton(),
-                OrDividerWidget(),
-                OAuthSignInButton(),
-              ],
+    return BlocListener<SignInBloc, SignInState>(
+      listener: (context, state) {
+        if (state is SignInFailed) {
+          FlushbarUtils.showFlushbar(context, message: state.error);
+        }
+
+        if (state is ForgotPasswordFailed) {
+          FlushbarUtils.showFlushbar(context, message: state.error);
+        }
+
+        if (state is ForgotPasswordSuccess) {
+          FlushbarUtils.showFlushbar(
+            context,
+            message: "resetPasswordSended".tr(),
+            color: Colors.green,
+          );
+        }
+
+        if (state is SignInSuccess) {
+          Navigator.pushNamedAndRemoveUntil(
+              context, AppRoutes.mainScreen, (route) => false);
+        }
+      },
+      child: Scaffold(
+        backgroundColor: backgroundColor,
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: 25.w,
+              ),
+              child: const Column(
+                children: [
+                  BuildSignInHeader(),
+                  BuildSignInForms(),
+                  BuildCreateAccountButton(),
+                  OrDividerWidget(),
+                  OAuthSignInButton(
+                    bloc: SignInBloc,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -79,13 +111,19 @@ class BuildSignInHeader extends StatelessWidget {
 }
 
 class BuildSignInForms extends StatefulWidget {
-  const BuildSignInForms({super.key});
+  const BuildSignInForms({
+    super.key,
+  });
 
   @override
   State<BuildSignInForms> createState() => BuildSignInFormsState();
 }
 
 class BuildSignInFormsState extends State<BuildSignInForms> {
+  final TextEditingController emailController = TextEditingController(text: '');
+  final TextEditingController passwordController =
+      TextEditingController(text: '');
+
   bool isObsecured = true;
 
   void _toggleObscureText() {
@@ -104,10 +142,12 @@ class BuildSignInFormsState extends State<BuildSignInForms> {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           CustomTextFormField(
+            controller: emailController,
             prefixIconsAssets: AssetsManager.emailIcon,
             hintText: "emailHintText".tr(),
           ),
           CustomTextFormField(
+            controller: passwordController,
             prefixIconsAssets: AssetsManager.lockIcon,
             hintText: "passwordHintText".tr(),
             obscureText: isObsecured,
@@ -118,7 +158,22 @@ class BuildSignInFormsState extends State<BuildSignInForms> {
           ),
           CustomTextButton(
             label: "forgotPasswordText".tr(),
-            onTap: () {},
+            onTap: () {
+              if (emailController.text.isNotEmpty) {
+                context
+                    .read<SignInBloc>()
+                    .add(ForgotPasswordRequest(email: emailController.text));
+              } else {
+                FlushbarUtils.showFlushbar(
+                  context,
+                  message: "Please ${"emailHintText".tr()}",
+                );
+              }
+            },
+          ),
+          BuildSignInButton(
+            emailController: emailController,
+            passwordController: passwordController,
           )
         ],
       ),
@@ -127,7 +182,12 @@ class BuildSignInFormsState extends State<BuildSignInForms> {
 }
 
 class BuildSignInButton extends StatelessWidget {
-  const BuildSignInButton({super.key});
+  final TextEditingController emailController;
+  final TextEditingController passwordController;
+  const BuildSignInButton(
+      {super.key,
+      required this.emailController,
+      required this.passwordController});
 
   @override
   Widget build(BuildContext context) {
@@ -135,7 +195,18 @@ class BuildSignInButton extends StatelessWidget {
       padding: EdgeInsets.only(top: 54.h),
       child: CustomButton(
         label: "signInButtonLabel".tr(),
-        onTap: () {},
+        onTap: () {
+          if (emailController.text.isNotEmpty &&
+              passwordController.text.isNotEmpty) {
+            context.read<SignInBloc>().add(SignInRequest(
+                signInDTO: SignInDTO(
+                    email: emailController.text,
+                    password: passwordController.text)));
+          } else {
+            FlushbarUtils.showFlushbar(context,
+                message: "formsEmptyMessage".tr());
+          }
+        },
       ),
     );
   }

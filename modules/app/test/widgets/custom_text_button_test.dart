@@ -23,7 +23,7 @@ void main() {
         home: Material(
           child: CustomTextButton(
             label: label,
-            onTap: mockOnTap,
+            onTap: mockOnTap.call,
           ),
         ),
       ));
@@ -39,7 +39,7 @@ void main() {
         home: Material(
           child: CustomTextButton(
             label: 'Button',
-            onTap: mockOnTap,
+            onTap: mockOnTap.call,
           ),
         ),
       ));
@@ -57,7 +57,7 @@ void main() {
         home: Material(
           child: CustomTextButton(
             label: 'Button',
-            onTap: mockOnTap,
+            onTap: mockOnTap.call,
             padding: customPadding,
           ),
         ),
@@ -79,7 +79,7 @@ void main() {
         home: Material(
           child: CustomTextButton(
             label: 'Button',
-            onTap: mockOnTap,
+            onTap: mockOnTap.call,
             labelTextStyle: customTextStyle,
           ),
         ),

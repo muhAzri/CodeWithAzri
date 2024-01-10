@@ -1,10 +1,14 @@
 import 'package:app/app.dart';
 import 'package:auth/auth.dart';
+import 'package:auth/bloc/sign_up/sign_up_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:models/dto/auth/sign_up_dto.dart';
 import 'package:shared/app_routes.dart';
 import 'package:shared/assets_manager.dart';
+import 'package:shared/flushbar_utils.dart';
 import 'package:shared/styles.dart';
 
 class SignUpScreen extends StatelessWidget {
@@ -12,23 +16,36 @@ class SignUpScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: backgroundColor,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: 25.w,
-            ),
-            child: const Column(
-              children: [
-                BuildSignUpHeader(),
-                BuildSignUpForms(),
-                BuildSignUpButton(),
-                BuildHaveAccountButton(),
-                OrDividerWidget(),
-                OAuthSignInButton(),
-              ],
+    return BlocListener<SignUpBloc, SignUpState>(
+      listener: (context, state) {
+        if (state is SignUpFailed) {
+          FlushbarUtils.showFlushbar(context, message: state.error);
+        }
+
+        if (state is SignUpSuccess) {
+          Navigator.pushNamedAndRemoveUntil(
+              context, AppRoutes.mainScreen, (route) => false);
+        }
+      },
+      child: Scaffold(
+        backgroundColor: backgroundColor,
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: 25.w,
+              ),
+              child: const Column(
+                children: [
+                  BuildSignUpHeader(),
+                  BuildSignUpForms(),
+                  BuildHaveAccountButton(),
+                  OrDividerWidget(),
+                  OAuthSignInButton(
+                    bloc: SignUpBloc,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -88,6 +105,15 @@ class BuildSignUpForms extends StatefulWidget {
 }
 
 class BuildSignUpFormsState extends State<BuildSignUpForms> {
+  final TextEditingController nameController = TextEditingController(
+    text: "",
+  );
+  final TextEditingController emailController = TextEditingController(
+    text: "",
+  );
+  final TextEditingController passwordController = TextEditingController(
+    text: "",
+  );
   bool isObsecured = true;
 
   void _toggleObscureText() {
@@ -105,18 +131,26 @@ class BuildSignUpFormsState extends State<BuildSignUpForms> {
       child: Column(
         children: [
           CustomTextFormField(
+            controller: nameController,
             prefixIconsAssets: AssetsManager.personIcon,
             hintText: "nameHintText".tr(),
           ),
           CustomTextFormField(
+            controller: emailController,
             prefixIconsAssets: AssetsManager.emailIcon,
             hintText: "emailHintText".tr(),
           ),
           CustomTextFormField(
+            controller: passwordController,
             prefixIconsAssets: AssetsManager.lockIcon,
             hintText: "passwordHintText".tr(),
             obscureText: isObsecured,
             onSuffixTapped: _toggleObscureText,
+          ),
+          BuildSignUpButton(
+            nameController: nameController,
+            emailController: emailController,
+            passwordController: passwordController,
           ),
         ],
       ),
@@ -125,7 +159,15 @@ class BuildSignUpFormsState extends State<BuildSignUpForms> {
 }
 
 class BuildSignUpButton extends StatelessWidget {
-  const BuildSignUpButton({super.key});
+  final TextEditingController nameController;
+  final TextEditingController emailController;
+  final TextEditingController passwordController;
+  const BuildSignUpButton({
+    super.key,
+    required this.nameController,
+    required this.emailController,
+    required this.passwordController,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -133,7 +175,29 @@ class BuildSignUpButton extends StatelessWidget {
       padding: EdgeInsets.only(top: 54.h),
       child: CustomButton(
         label: "signUpButtonLabel".tr(),
-        onTap: () {},
+        onTap: () {
+          if (nameController.text.isEmpty ||
+              emailController.text.isEmpty ||
+              passwordController.text.isEmpty) {
+            FlushbarUtils.showFlushbar(
+              context,
+              message: "formsEmptyMessage".tr(),
+            );
+            return;
+          }
+
+          SignUpDTO dto = SignUpDTO(
+            name: nameController.text,
+            email: emailController.text,
+            password: passwordController.text,
+          );
+
+          context.read<SignUpBloc>().add(
+                SignUpRequest(
+                  dto: dto,
+                ),
+              );
+        },
       ),
     );
   }

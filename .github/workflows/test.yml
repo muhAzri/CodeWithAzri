@@ -7,7 +7,6 @@ on:
   push:
     branches:
       - main
-      - development
 
 jobs:
   melos_flutter_tests:
@@ -35,9 +34,6 @@ jobs:
         run: flutter pub global run melos analyze
 
       - name: Run tests
-        run: flutter pub global run melos test
-
-      - name: Run tests coverage
         run: |
           flutter pub global run melos test-coverage
 
