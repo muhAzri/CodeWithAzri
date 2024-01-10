@@ -13,9 +13,9 @@ class MockUser extends Mock implements User {}
 
 class MockUserCredential extends Mock implements UserCredential {
   @override
-  final User user;
+  final User? user;
 
-  MockUserCredential({required this.user});
+  MockUserCredential({this.user});
 }
 
 class MockFirebaseAuth extends Mock implements FirebaseAuth {}
@@ -28,16 +28,18 @@ class MockGoogleSignInAccount extends Mock implements GoogleSignInAccount {
   @override
   final Future<GoogleSignInAuthentication> authentication;
 
-  MockGoogleSignInAccount()
-      : authentication = Future.value(MockGoogleSignInAuthentication());
+  MockGoogleSignInAccount(
+      {Future<GoogleSignInAuthentication>? newAuthentication})
+      : authentication =
+            newAuthentication ?? Future.value(MockGoogleSignInAuthentication());
 }
 
 class MockGoogleSignInAuthentication extends Mock
     implements GoogleSignInAuthentication {
   @override
-  final String accessToken;
+  final String? accessToken;
   @override
-  final String idToken;
+  final String? idToken;
 
   MockGoogleSignInAuthentication({
     this.accessToken = 'token',
@@ -283,6 +285,59 @@ void main() {
 
         expect(user, isNotNull);
         expect(user, isA<MockUser>());
+      });
+
+      test("signInWithGoogle throw FirebaseAuthException when User Not Found",
+          () async {
+        when(() => mockGoogleSignIn.signIn())
+            .thenAnswer((_) async => MockGoogleSignInAccount());
+
+        when(() => mockFirebaseAuth.signInWithCredential(any())).thenAnswer(
+          (_) async => MockUserCredential(),
+        );
+
+        callGoogleSignIn() async => await mockAuthServices.signInWithGoogle();
+        expect(
+          callGoogleSignIn,
+          throwsA(
+            isA<String>().having(
+              (e) => e,
+              'message',
+              'User not found',
+            ),
+          ),
+        );
+      });
+
+      test(
+          "signInWithGoogle throw FirebaseAuthException when   Google accessToken and idToken are null",
+          () async {
+        when(() => mockGoogleSignIn.signIn()).thenAnswer(
+          (_) async => MockGoogleSignInAccount(
+            newAuthentication: Future.value(
+              MockGoogleSignInAuthentication(
+                accessToken: null,
+                idToken: null,
+              ),
+            ),
+          ),
+        );
+
+        when(() => mockFirebaseAuth.signInWithCredential(any())).thenAnswer(
+          (_) async => MockUserCredential(),
+        );
+
+        callGoogleSignIn() async => await mockAuthServices.signInWithGoogle();
+        expect(
+          callGoogleSignIn,
+          throwsA(
+            isA<String>().having(
+              (e) => e,
+              'message',
+              'Sign in failed',
+            ),
+          ),
+        );
       });
 
       test("signInWithGoogle throw FirebaseAuthException when UnsuccessFull",

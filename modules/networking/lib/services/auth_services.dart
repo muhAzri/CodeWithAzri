@@ -136,7 +136,9 @@ class AuthService {
       return credential.user!;
     } else {
       throw FirebaseAuthException(
-          code: 'sign_in_failed', message: 'User not found');
+        code: 'sign_in_failed',
+        message: 'User not found',
+      );
     }
   }
 }
