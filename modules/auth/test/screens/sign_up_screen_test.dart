@@ -71,7 +71,12 @@ void main() {
       const SignUpDTO(name: "name", email: "email", password: "password"),
     );
     registerFallbackValue(
-      const UserInitializationDTO(name: "name", email: "email", id: "id"),
+      const UserInitializationDTO(
+        name: "name",
+        email: "email",
+        id: "id",
+        profilePicture: "example.com",
+      ),
     );
   });
 

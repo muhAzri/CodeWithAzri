@@ -29,6 +29,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
         id: user.uid,
         name: event.dto.name,
         email: event.dto.email,
+        profilePicture: user.photoURL!,
       ));
 
       emit(SignUpSuccess());
@@ -46,6 +47,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
         id: user.uid,
         name: user.displayName!,
         email: user.email!,
+        profilePicture: user.photoURL!,
       ));
 
       emit(SignUpSuccess());

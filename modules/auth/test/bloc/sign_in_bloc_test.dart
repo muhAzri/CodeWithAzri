@@ -20,8 +20,15 @@ class MockUser extends Mock implements User {
   final String displayName;
   @override
   final String email;
+  @override
+  final String photoURL;
 
-  MockUser({this.uid = 'id', this.displayName = 'name', this.email = 'email'});
+  MockUser({
+    this.uid = 'id',
+    this.displayName = 'name',
+    this.email = 'email',
+    this.photoURL = 'example.com',
+  });
 }
 
 void main() {
@@ -35,7 +42,11 @@ void main() {
       const SignInDTO(email: "email", password: "password"),
     );
     registerFallbackValue(
-      const UserInitializationDTO(name: "name", email: "email", id: "id"),
+      const UserInitializationDTO(
+          name: "name",
+          email: "email",
+          id: "id",
+          profilePicture: "example.com"),
     );
   });
 

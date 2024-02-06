@@ -59,7 +59,12 @@ void main() {
 
   setUpAll(() {
     registerFallbackValue(
-      const UserInitializationDTO(name: "name", email: "email", id: "id"),
+      const UserInitializationDTO(
+        name: "name",
+        email: "email",
+        id: "id",
+        profilePicture: "example.com",
+      ),
     );
   });
 
