@@ -3,6 +3,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:models/dto/auth/sign_in_dto.dart';
 import 'package:models/dto/auth/sign_up_dto.dart';
 import 'package:networking/services/apple_sign_in_service.dart';
+import 'package:shared/shared.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class AuthService {
@@ -36,7 +37,12 @@ class AuthService {
         email: dto.email,
         password: dto.password,
       );
-      return checkUserCredential(credential);
+
+      User registeredUser = checkUserCredential(credential);
+      await registeredUser.updateDisplayName(dto.name);
+      await registeredUser.updatePhotoURL(getAvatarUrl(dto.name));
+
+      return registeredUser;
     } catch (e) {
       if (e is FirebaseAuthException) {
         throw "${e.message}";

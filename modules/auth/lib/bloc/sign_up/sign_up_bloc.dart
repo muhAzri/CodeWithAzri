@@ -4,6 +4,7 @@ import 'package:models/dto/auth/sign_up_dto.dart';
 import 'package:models/dto/user/user_initialization_dto.dart';
 import 'package:networking/services/auth_services.dart';
 import 'package:networking/services/user_services.dart';
+import 'package:shared/constants.dart';
 
 part 'sign_up_event.dart';
 part 'sign_up_state.dart';
@@ -29,7 +30,7 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
         id: user.uid,
         name: event.dto.name,
         email: event.dto.email,
-        profilePicture: user.photoURL!,
+        profilePicture: user.photoURL ?? getAvatarUrl(event.dto.name),
       ));
 
       emit(SignUpSuccess());
