@@ -147,6 +147,8 @@ void main() {
         );
       });
 
+      User mockUser = MockUser();
+
       test(
         "signUp return User When Success",
         () async {
@@ -155,9 +157,15 @@ void main() {
                 password: any(named: 'password'),
               )).thenAnswer(
             (_) async => MockUserCredential(
-              user: MockUser(),
+              user: mockUser,
             ),
           );
+
+          when(() => mockUser.updateDisplayName(any()))
+              .thenAnswer((invocation) async => {});
+
+          when(() => mockUser.updatePhotoURL(any()))
+              .thenAnswer((invocation) async => {});
 
           final user = await mockAuthServices.signUp(signUpDTO);
 

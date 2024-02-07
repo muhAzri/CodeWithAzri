@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 
 class LocalizationTestApp extends StatelessWidget {
   final Widget? child;
@@ -23,10 +24,12 @@ class LocalizationTestApp extends StatelessWidget {
       saveLocale: false,
       child: ScreenUtilInit(
         designSize: const Size(393, 847),
-        child: MaterialApp(
-          navigatorObservers: navigatorObservers ?? const <NavigatorObserver>[],
-          home: child,
-          routes: routes ?? const <String, WidgetBuilder>{},
+        child: GlobalLoaderOverlay(
+          child: MaterialApp(
+            navigatorObservers: navigatorObservers ?? const <NavigatorObserver>[],
+            home: child,
+            routes: routes ?? const <String, WidgetBuilder>{},
+          ),
         ),
       ),
       errorWidget: (message) {

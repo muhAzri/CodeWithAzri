@@ -3,6 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:shared/constants.dart';
 
 class MyApp extends StatelessWidget {
@@ -24,13 +25,15 @@ class MyApp extends StatelessWidget {
       child: ScreenUtilInit(
         designSize: const Size(393, 847),
         builder: (context, child) {
-          return MaterialApp(
-            navigatorKey: globalNavigatorKey,
-            onGenerateRoute: appRouter.onGenerateRoute,
-            debugShowCheckedModeBanner: kDebugMode,
-            localizationsDelegates: context.localizationDelegates,
-            supportedLocales: context.supportedLocales,
-            locale: context.locale,
+          return GlobalLoaderOverlay(
+            child: MaterialApp(
+              navigatorKey: globalNavigatorKey,
+              onGenerateRoute: appRouter.onGenerateRoute,
+              debugShowCheckedModeBanner: kDebugMode,
+              localizationsDelegates: context.localizationDelegates,
+              supportedLocales: context.supportedLocales,
+              locale: context.locale,
+            ),
           );
         },
       ),

@@ -21,6 +21,7 @@ dependencies:
   flutter_screenutil: ^5.9.0
   get_it: ^7.6.6
   google_sign_in: ^6.2.1
+  loader_overlay: ^4.0.0
   models:
     path: ../models
   networking:
