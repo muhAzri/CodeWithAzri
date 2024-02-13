@@ -13,6 +13,9 @@ scripts:
   pubget:
    run: melos exec -- flutter pub get
    description: Run `flutter pub get` in all packages.
+  update-pub:
+   run: melos exec -- flutter pub upgrade --major-versions
+   description: Run `flutter pub upgrade` in all packages.
   test:
     run: |
       melos exec --dir-exists="test" --fail-fast -- flutter test --no-pub --coverage
