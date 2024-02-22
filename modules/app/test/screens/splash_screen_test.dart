@@ -1,12 +1,12 @@
 import 'package:app/presentation/screens/splash_screen.dart';
+import 'package:auth/data/remote/auth_services.dart';
+import 'package:cwa_core/core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
-import 'package:locator/locator.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:networking/services/auth_services.dart';
 
 class MockNavigatorObserver extends Mock implements NavigatorObserver {}
 

@@ -1,7 +1,7 @@
+import 'package:cwa_core/core.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:shared/shared.dart';
 import 'package:app/presentation/widgets/custom_button.dart';
 import 'package:app/presentation/widgets/custom_text_button.dart';
 
@@ -42,7 +42,7 @@ class OnboardLogo extends StatelessWidget {
         AssetsManager.onboard,
         width: 342.w,
         height: 280.h,
-        package: 'shared',
+        package: 'cwa_core',
       ),
     );
   }

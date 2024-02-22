@@ -1,6 +1,7 @@
+
+import 'package:cwa_core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:shared/assets_manager.dart';
 
 class AppleSignInButton extends StatelessWidget {
   final EdgeInsets? padding;
@@ -17,7 +18,7 @@ class AppleSignInButton extends StatelessWidget {
         child: Image.asset(
           AssetsManager.loginApple,
           width: 342.w,
-          package: 'shared',
+          package: 'cwa_core',
         ),
       ),
     );

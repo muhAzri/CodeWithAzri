@@ -2,7 +2,8 @@ import 'package:app/app.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:shared/shared.dart';
+import 'package:cwa_core/test_helper/test.dart';
+
 
 class MockVoidCallback extends Mock {
   void call();

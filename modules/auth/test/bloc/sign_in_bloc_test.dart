@@ -1,13 +1,13 @@
 import 'package:auth/bloc/sign_in/sign_in_bloc.dart';
+import 'package:auth/data/dto/auth/sign_in_dto.dart';
+import 'package:auth/data/dto/user/user_initialization_dto.dart';
+import 'package:auth/data/remote/auth_services.dart';
+import 'package:auth/data/remote/user_services.dart';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:models/dto/auth/sign_in_dto.dart';
-import 'package:models/dto/user/user_initialization_dto.dart';
-import 'package:networking/services/auth_services.dart';
-import 'package:networking/services/user_services.dart';
 
 class MockAuthService extends Mock implements AuthService {}
 
@@ -155,8 +155,9 @@ void main() {
             message: "Failed To Sign In",
           ),
         );
-        when(() => mockUserService.initializeUser(any()))
-            .thenAnswer((_) async {});
+        when(() => mockUserService.initializeUser(any())).thenAnswer((_) async {
+          return;
+        });
 
         return signInBloc;
       },
@@ -189,7 +190,9 @@ void main() {
       "emits [ForgotPasswordLoading,ForgotPasswordSuccess] when ForgotPasswordRequest is added successfully",
       build: () {
         when(() => mockAuthService.sendPasswordResetEmail(any()))
-            .thenAnswer((_) async {});
+            .thenAnswer((_) async {
+          return;
+        });
 
         return signInBloc;
       },

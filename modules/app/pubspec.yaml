@@ -17,12 +17,11 @@ dependencies:
   get_it: ^7.6.6
   home:
     path: ../home
-  locator:
-    path: ../locator
-  networking:
-    path: ../networking
-  shared:
-    path: ../shared
+  cwa_core:
+    path: ../core
+  auth:
+    path: ../auth
+  
 
 dev_dependencies:
   flutter_lints: ^3.0.1
@@ -37,9 +36,9 @@ dev_dependencies:
 flutter:
 
   # To add assets to your package, add an assets section, like this:
-  assets:
-    - ../shared/assets/images/
-    - ../shared/assets/icons/
+  # assets:
+    # - ../cwa/assets/images/
+    # - ../cwa/assets/icons/
   # For details regarding assets in packages, see
   # https://flutter.dev/assets-and-images/#from-packages
   #

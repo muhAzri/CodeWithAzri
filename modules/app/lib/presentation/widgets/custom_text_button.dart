@@ -1,5 +1,5 @@
+import 'package:cwa_core/core.dart';
 import 'package:flutter/material.dart';
-import 'package:shared/shared.dart';
 
 class CustomTextButton extends StatelessWidget {
   final String label;

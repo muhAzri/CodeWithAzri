@@ -9,9 +9,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:models/dto/user/user_initialization_dto.dart';
-import 'package:networking/services/auth_services.dart';
-import 'package:networking/services/user_services.dart';
 
 class MockAuthService extends Mock implements AuthService {}
 
