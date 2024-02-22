@@ -39,6 +39,7 @@ void main() {
         id: 'id',
         name: 'name',
         email: 'email',
+        profilePicture: "example.com",
       ),
     );
   });
@@ -50,8 +51,12 @@ void main() {
   group(
     'UserService',
     () {
-      const initializationDTO =
-          UserInitializationDTO(id: 'id', name: 'name', email: 'email');
+      const initializationDTO = UserInitializationDTO(
+        id: 'id',
+        name: 'name',
+        email: 'email',
+        profilePicture: "example.com",
+      );
 
       test("Test Initialize User When User Already Been Initialized", () async {
         when(() =>

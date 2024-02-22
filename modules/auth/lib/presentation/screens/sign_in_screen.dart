@@ -5,6 +5,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:models/dto/auth/sign_in_dto.dart';
 import 'package:shared/flushbar_utils.dart';
 import 'package:shared/shared.dart';
@@ -20,14 +21,17 @@ class SignInScreen extends StatelessWidget {
     return BlocListener<SignInBloc, SignInState>(
       listener: (context, state) {
         if (state is SignInFailed) {
+          context.loaderOverlay.hide();
           FlushbarUtils.showFlushbar(context, message: state.error);
         }
 
         if (state is ForgotPasswordFailed) {
+          context.loaderOverlay.hide();
           FlushbarUtils.showFlushbar(context, message: state.error);
         }
 
         if (state is ForgotPasswordSuccess) {
+          context.loaderOverlay.hide();
           FlushbarUtils.showFlushbar(
             context,
             message: "resetPasswordSended".tr(),
@@ -36,8 +40,13 @@ class SignInScreen extends StatelessWidget {
         }
 
         if (state is SignInSuccess) {
+          context.loaderOverlay.hide();
           Navigator.pushNamedAndRemoveUntil(
               context, AppRoutes.mainScreen, (route) => false);
+        }
+
+        if (state is SignInLoading || state is ForgotPasswordLoading) {
+          context.loaderOverlay.hide();
         }
       },
       child: Scaffold(

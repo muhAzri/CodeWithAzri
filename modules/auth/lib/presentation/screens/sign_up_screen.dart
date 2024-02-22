@@ -5,6 +5,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:models/dto/auth/sign_up_dto.dart';
 import 'package:shared/app_routes.dart';
 import 'package:shared/assets_manager.dart';
@@ -19,12 +20,20 @@ class SignUpScreen extends StatelessWidget {
     return BlocListener<SignUpBloc, SignUpState>(
       listener: (context, state) {
         if (state is SignUpFailed) {
+          context.loaderOverlay.hide();
+
           FlushbarUtils.showFlushbar(context, message: state.error);
         }
 
         if (state is SignUpSuccess) {
+          context.loaderOverlay.hide();
+
           Navigator.pushNamedAndRemoveUntil(
               context, AppRoutes.mainScreen, (route) => false);
+        }
+
+        if (state is SignUpLoading) {
+          context.loaderOverlay.show();
         }
       },
       child: Scaffold(

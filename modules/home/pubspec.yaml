@@ -1,4 +1,4 @@
-name: locator
+name: home
 description: "A new Flutter package project."
 version: 0.0.1
 homepage: null
@@ -9,20 +9,27 @@ environment:
   flutter: ">=1.17.0"
 
 dependencies:
-  auth:
-    path: ../auth
-  firebase_auth: ^4.16.0
+  app:
+    path: ../app/
+  easy_localization: ^3.0.3
+  equatable: ^2.0.5
   flutter:
     sdk: flutter
+  flutter_screenutil: ^5.9.0
   get_it: ^7.6.6
-  google_sign_in: ^6.2.1
+  models:
+    path: ../models
   networking:
     path: ../networking
+  shared:
+    path: ../shared
 
 dev_dependencies:
+  bloc_test: ^9.1.5
   flutter_lints: ^3.0.1
   flutter_test:
     sdk: flutter
+  mocktail: ^1.0.2
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 
 class TestApp extends StatelessWidget {
   final Widget? home;
@@ -12,9 +13,11 @@ class TestApp extends StatelessWidget {
       context,
       designSize: const Size(393, 847),
     );
-    return MaterialApp(
-      home: home,
-      routes: routes ?? const <String, WidgetBuilder>{},
+    return GlobalLoaderOverlay(
+      child: MaterialApp(
+        home: home,
+        routes: routes ?? const <String, WidgetBuilder>{},
+      ),
     );
   }
 }

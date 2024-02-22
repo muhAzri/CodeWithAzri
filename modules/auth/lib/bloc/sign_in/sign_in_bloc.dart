@@ -62,6 +62,7 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
         id: user.uid,
         name: user.displayName!,
         email: user.email!,
+        profilePicture: user.photoURL!,
       ));
 
       emit(SignInSuccess());

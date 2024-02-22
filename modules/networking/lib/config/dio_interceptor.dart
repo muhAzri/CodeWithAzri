@@ -1,6 +1,8 @@
 // coverage:ignore-file
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:shared/shared.dart';
 
 class DioInterceptor {
   final Dio _dio = Dio();
@@ -26,6 +28,13 @@ class DioInterceptor {
         handler.next(options);
       },
       onError: (error, handler) async {
+        if (error.response?.statusCode == 401) {
+          Navigator.pushNamedAndRemoveUntil(
+              globalNavigatorKey.currentState!.context,
+              AppRoutes.onboardScreen,
+              (route) => false);
+        }
+
         handler.reject(error);
       },
     ));
