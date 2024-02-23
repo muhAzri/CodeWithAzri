@@ -76,8 +76,6 @@ void main() {
 
       final props = userDTO.props;
 
-      print(props);
-
       expect(props.contains('1'), isTrue);
       expect(props.contains('John Doe'), isTrue);
       expect(props.contains('john@example.com'), isTrue);
