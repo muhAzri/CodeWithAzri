@@ -18,7 +18,7 @@ class UserInitializationDTO extends Equatable {
   });
 
   @override
-  List<Object> get props => [id, name, email];
+  List<Object> get props => [id, name, email, profilePicture];
 
   factory UserInitializationDTO.fromJson(Map<String, dynamic> json) =>
       _$UserInitializationDTOFromJson(json);

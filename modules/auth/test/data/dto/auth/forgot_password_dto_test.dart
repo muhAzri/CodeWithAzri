@@ -40,5 +40,13 @@ void main() {
       // Assert
       expect(areEqual, isTrue);
     });
+
+    test('Props should contain all properties', () {
+      const forgotPassword = ForgotPassword(email: 'test@example.com');
+
+      final props = forgotPassword.props;
+
+      expect(props.contains('test@example.com'), isTrue);
+    });
   });
 }

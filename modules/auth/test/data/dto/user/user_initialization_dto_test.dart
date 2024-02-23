@@ -65,5 +65,23 @@ void main() {
       // Assert
       expect(areEqual, isTrue);
     });
+
+    test('Props should contain all properties', () {
+      const userDTO = UserInitializationDTO(
+        id: '1',
+        name: 'John Doe',
+        email: 'john@example.com',
+        profilePicture: 'profile.jpg',
+      );
+
+      final props = userDTO.props;
+
+      print(props);
+
+      expect(props.contains('1'), isTrue);
+      expect(props.contains('John Doe'), isTrue);
+      expect(props.contains('john@example.com'), isTrue);
+      expect(props.contains('profile.jpg'), isTrue);
+    });
   });
 }
