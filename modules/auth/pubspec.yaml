@@ -13,6 +13,7 @@ dependencies:
     path: ../app/
   cwa_core:
     path: ../core
+  dio: ^5.4.1
   easy_localization: ^3.0.3
   equatable: ^2.0.5
   firebase_auth: ^4.15.3
@@ -23,9 +24,9 @@ dependencies:
   flutter_screenutil: ^5.9.0
   get_it: ^7.6.6
   google_sign_in: ^6.2.1
+  json_annotation: ^4.8.1
   loader_overlay: ^4.0.0
   sign_in_with_apple: ^5.0.0
-  json_annotation: ^4.8.1
 
 dev_dependencies:
   bloc_test: ^9.1.5
