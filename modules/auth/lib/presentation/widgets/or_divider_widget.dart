@@ -1,6 +1,6 @@
+import 'package:cwa_core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:shared/styles.dart';
 
 class OrDividerWidget extends StatelessWidget {
   const OrDividerWidget({super.key});
