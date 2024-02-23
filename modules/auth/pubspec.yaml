@@ -11,6 +11,9 @@ environment:
 dependencies:
   app:
     path: ../app/
+  cwa_core:
+    path: ../core
+  dio: ^5.4.1
   easy_localization: ^3.0.3
   equatable: ^2.0.5
   firebase_auth: ^4.15.3
@@ -21,33 +24,29 @@ dependencies:
   flutter_screenutil: ^5.9.0
   get_it: ^7.6.6
   google_sign_in: ^6.2.1
-  models:
-    path: ../models
-  networking:
-    path: ../networking
-  shared:
-    path: ../shared
+  json_annotation: ^4.8.1
+  loader_overlay: ^4.0.0
+  sign_in_with_apple: ^5.0.0
 
 dev_dependencies:
+
   bloc_test: ^9.1.5
-  build_runner: ^2.4.7
-  firebase_auth_mocks: ^0.13.0
+  build_runner: ^2.4.8
   flutter_lints: ^3.0.1
   flutter_test:
     sdk: flutter
-  google_sign_in_mocks: ^0.3.0
+  json_serializable_helper: ^1.1.0
   mocktail: ^1.0.2
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 # The following section is specific to Flutter packages.
-flutter:
+flutter: null
 
-  # To add assets to your package, add an assets section, like this:
-  assets:
-    - ../shared/assets/images/
-    - ../shared/assets/icons/
-
+# To add assets to your package, add an assets section, like this:
+# assets:
+#   - ../shared/assets/images/
+#   - ../shared/assets/icons/
 #
 # For details regarding assets in packages, see
 # https://flutter.dev/assets-and-images/#from-packages

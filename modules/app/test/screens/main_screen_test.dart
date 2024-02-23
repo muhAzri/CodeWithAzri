@@ -1,7 +1,8 @@
 import 'package:app/presentation/screens/main_screen.dart';
+import 'package:cwa_core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shared/shared.dart';
+import 'package:home/presentation/screens/home_screen.dart';
 
 void main() {
   group('MainScreen widget test group', () {
@@ -13,7 +14,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text("Home Screen"), findsOneWidget);
+      expect(find.byType(HomeScreen), findsOneWidget);
     });
 
     testWidgets('Switching to search screen via bottom navigation bar',

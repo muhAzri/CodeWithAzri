@@ -1,13 +1,13 @@
 import 'package:auth/bloc/sign_up/sign_up_bloc.dart';
+import 'package:auth/data/dto/auth/sign_up_dto.dart';
+import 'package:auth/data/dto/user/user_initialization_dto.dart';
+import 'package:auth/data/remote/auth_services.dart';
+import 'package:auth/data/remote/user_services.dart';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:models/dto/auth/sign_up_dto.dart';
-import 'package:models/dto/user/user_initialization_dto.dart';
-import 'package:networking/services/auth_services.dart';
-import 'package:networking/services/user_services.dart';
 
 class MockAuthService extends Mock implements AuthService {}
 
@@ -20,8 +20,15 @@ class MockUser extends Mock implements User {
   final String displayName;
   @override
   final String email;
+  @override
+  final String photoURL;
 
-  MockUser({this.uid = 'id', this.displayName = 'name', this.email = 'email'});
+  MockUser({
+    this.uid = 'id',
+    this.displayName = 'name',
+    this.email = 'email',
+    this.photoURL = 'url',
+  });
 }
 
 void main() {
@@ -35,7 +42,11 @@ void main() {
       const SignUpDTO(name: "name", email: "email", password: "password"),
     );
     registerFallbackValue(
-      const UserInitializationDTO(name: "name", email: "email", id: "id"),
+      const UserInitializationDTO(
+          name: "name",
+          email: "email",
+          id: "id",
+          profilePicture: "example.com"),
     );
   });
 
@@ -84,8 +95,9 @@ void main() {
       build: () {
         when(() => mockAuthService.signUp(any()))
             .thenAnswer((_) async => MockUser());
-        when(() => mockUserService.initializeUser(any()))
-            .thenAnswer((_) async {});
+        when(() => mockUserService.initializeUser(any())).thenAnswer((_) async {
+          return;
+        });
         return signUpBloc;
       },
       act: (bloc) => bloc.add(SignUpRequest(dto: signUpDTO)),
@@ -104,8 +116,9 @@ void main() {
             message: "Failed To Sign Up",
           ),
         );
-        when(() => mockUserService.initializeUser(any()))
-            .thenAnswer((_) async {});
+        when(() => mockUserService.initializeUser(any())).thenAnswer((_) async {
+          return;
+        });
         return signUpBloc;
       },
       act: (bloc) => bloc.add(SignUpRequest(dto: signUpDTO)),
@@ -136,8 +149,9 @@ void main() {
       build: () {
         when(() => mockAuthService.signInWithGoogle())
             .thenAnswer((_) async => MockUser());
-        when(() => mockUserService.initializeUser(any()))
-            .thenAnswer((_) async {});
+        when(() => mockUserService.initializeUser(any())).thenAnswer((_) async {
+          return;
+        });
         return signUpBloc;
       },
       act: (bloc) => bloc.add(SignUpByGoogleRequest()),
@@ -156,8 +170,9 @@ void main() {
             message: "Failed To Sign Up",
           ),
         );
-        when(() => mockUserService.initializeUser(any()))
-            .thenAnswer((_) async {});
+        when(() => mockUserService.initializeUser(any())).thenAnswer((_) async {
+          return;
+        });
         return signUpBloc;
       },
       act: (bloc) => bloc.add(SignUpByGoogleRequest()),

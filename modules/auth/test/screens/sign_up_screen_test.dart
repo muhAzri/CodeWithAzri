@@ -1,20 +1,16 @@
 import 'package:app/presentation/widgets/custom_textform_field.dart';
+import 'package:auth/auth.dart';
 import 'package:auth/bloc/sign_up/sign_up_bloc.dart';
-import 'package:auth/presentation/screens/sign_up_screen.dart';
-import 'package:auth/presentation/widgets/or_divider_widget.dart';
+
 import 'package:bloc_test/bloc_test.dart';
+import 'package:cwa_core/test_helper/test.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:models/dto/auth/sign_up_dto.dart';
-import 'package:models/dto/user/user_initialization_dto.dart';
-import 'package:networking/services/auth_services.dart';
-import 'package:networking/services/user_services.dart';
-import 'package:shared/test_assets/localization_test_app.dart';
-import 'package:shared/test_assets/test_app.dart';
+
 
 enum NavigatorAction { push, pop, replaced }
 
@@ -71,7 +67,12 @@ void main() {
       const SignUpDTO(name: "name", email: "email", password: "password"),
     );
     registerFallbackValue(
-      const UserInitializationDTO(name: "name", email: "email", id: "id"),
+      const UserInitializationDTO(
+        name: "name",
+        email: "email",
+        id: "id",
+        profilePicture: "example.com",
+      ),
     );
   });
 

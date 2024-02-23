@@ -1,6 +1,6 @@
+import 'package:cwa_core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:shared/styles.dart';
 
 class CustomTextFormField extends StatelessWidget {
   final String prefixIconsAssets;
@@ -48,7 +48,7 @@ class CustomTextFormField extends StatelessWidget {
         width: 24.w,
         height: 24.h,
         color: grayColor,
-        package: 'shared',
+        package: 'cwa_core',
       ),
     );
   }

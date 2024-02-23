@@ -1,11 +1,9 @@
 import 'dart:async';
-
+import 'package:auth/auth.dart';
+import 'package:cwa_core/core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:locator/locator.dart';
-import 'package:networking/services/auth_services.dart';
-import 'package:shared/shared.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -62,7 +60,7 @@ class _SplashScreenState extends State<SplashScreen> {
           AssetsManager.logo,
           width: 256.w,
           height: 256.h,
-          package: 'shared',
+          package: 'cwa_core',
         ),
       ),
     );

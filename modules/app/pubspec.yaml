@@ -15,18 +15,20 @@ dependencies:
     sdk: flutter
   flutter_screenutil: ^5.9.0
   get_it: ^7.6.6
-  locator:
-    path: ../locator
-  networking:
-    path: ../networking
-  shared:
-    path: ../shared
+  home:
+    path: ../home
+  cwa_core:
+    path: ../core
+  auth:
+    path: ../auth
+  
 
 dev_dependencies:
   flutter_lints: ^3.0.1
   flutter_test:
     sdk: flutter
   mocktail: ^1.0.2
+  mocktail_image_network: ^1.1.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -34,9 +36,9 @@ dev_dependencies:
 flutter:
 
   # To add assets to your package, add an assets section, like this:
-  assets:
-    - ../shared/assets/images/
-    - ../shared/assets/icons/
+  # assets:
+    # - ../cwa/assets/images/
+    # - ../cwa/assets/icons/
   # For details regarding assets in packages, see
   # https://flutter.dev/assets-and-images/#from-packages
   #

@@ -1,9 +1,9 @@
 import 'package:auth/bloc/sign_in/sign_in_bloc.dart';
 import 'package:auth/bloc/sign_up/sign_up_bloc.dart';
+import 'package:cwa_core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:shared/assets_manager.dart';
 
 class GoogleSignInButton extends StatelessWidget {
   final EdgeInsets? padding;
@@ -28,7 +28,7 @@ class GoogleSignInButton extends StatelessWidget {
         child: Image.asset(
           AssetsManager.loginGoogle,
           width: 274.w,
-          package: 'shared',
+          package: 'cwa_core',
         ),
       ),
     );
