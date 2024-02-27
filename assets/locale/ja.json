@@ -19,5 +19,7 @@
     "navBarItemHome": "ホーム",
     "navBarItemSearch": "検索",
     "navBarItemMyCourse": "マイコース",
-    "navBarItemProfile": "プロフィール"
+    "navBarItemProfile": "プロフィール",
+    "searchBarPlaceholderText": "スキルや技術スタックで検索",
+    "homeContinueLearningText": "学習を続ける"
 }

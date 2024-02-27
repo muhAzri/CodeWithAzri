@@ -24,12 +24,6 @@ class _MainScreenState extends State<MainScreen> {
     return const HomeScreen();
   }
 
-  Widget _buildSearchScreen() {
-    return const Center(
-      child: Text("Search Screen"),
-    );
-  }
-
   Widget _buildMyCourseScreen() {
     return const Center(
       child: Text("My Course Screen"),
@@ -47,10 +41,8 @@ class _MainScreenState extends State<MainScreen> {
       case 0:
         return _buildHomeScreen();
       case 1:
-        return _buildSearchScreen();
-      case 2:
         return _buildMyCourseScreen();
-      case 3:
+      case 2:
         return _buildProfileScreen();
     }
     return null;
@@ -78,15 +70,6 @@ class _MainScreenState extends State<MainScreen> {
           ),
         ),
         label: 'navBarItemHome'.tr(),
-      ),
-      BottomNavigationBarItem(
-        icon: Container(
-          padding: EdgeInsets.only(top: 6.h),
-          child: const Icon(
-            Icons.explore_outlined,
-          ),
-        ),
-        label: 'navBarItemSearch'.tr(),
       ),
       BottomNavigationBarItem(
         icon: Container(

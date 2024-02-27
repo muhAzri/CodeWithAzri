@@ -19,5 +19,7 @@
     "navBarItemHome": "Startseite",
     "navBarItemSearch": "Suche",
     "navBarItemMyCourse": "Meine Kurse",
-    "navBarItemProfile": "Profil"
+    "navBarItemProfile": "Profil",
+    "searchBarPlaceholderText": "Nach Fähigkeiten oder Technologiestapeln suchen",
+    "homeContinueLearningText": "Lernen fortsetzen"
 }
