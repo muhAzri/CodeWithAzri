@@ -1,6 +1,6 @@
 import 'package:app/presentation/widgets/custom_textform_field.dart';
 import 'package:auth/auth.dart';
-import 'package:auth/bloc/sign_up/sign_up_bloc.dart';
+import 'package:auth/bloc/auth/auth_bloc.dart';
 
 import 'package:bloc_test/bloc_test.dart';
 import 'package:cwa_core/test_helper/test.dart';
@@ -10,7 +10,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mocktail/mocktail.dart';
-
 
 enum NavigatorAction { push, pop, replaced }
 
@@ -45,19 +44,19 @@ class MockUser extends Mock implements User {
   MockUser({this.uid = 'id', this.displayName = 'name', this.email = 'email'});
 }
 
-class MockSignUpBloc extends Mock implements SignUpBloc {
+class MockAuthBloc extends Mock implements AuthBloc {
   @override
   final AuthService services;
   @override
   final UserService userService;
 
-  MockSignUpBloc({required this.services, required this.userService}) {
+  MockAuthBloc({required this.services, required this.userService}) {
     when(() => close()).thenAnswer((_) async => {});
   }
 }
 
 void main() {
-  late SignUpBloc signUpBloc;
+  late AuthBloc authBloc;
   late AuthService mockAuthService;
   late UserService mockUserService;
   late GetIt getIt;
@@ -84,14 +83,14 @@ void main() {
     mockAuthService = getIt<AuthService>();
     mockUserService = getIt<UserService>();
 
-    signUpBloc = MockSignUpBloc(
+    authBloc = MockAuthBloc(
       services: mockAuthService,
       userService: mockUserService,
     );
   });
 
   tearDown(() {
-    signUpBloc.close();
+    authBloc.close();
     getIt.reset();
   });
 
@@ -164,19 +163,19 @@ void main() {
           TextEditingController(text: "Password");
 
       whenListen(
-        signUpBloc,
+        authBloc,
         Stream.fromIterable([
-          SignUpInitial(),
+          AuthInitial(),
           SignUpLoading(),
           SignUpSuccess(),
         ]),
-        initialState: SignUpInitial(),
+        initialState: AuthInitial(),
       );
 
       await tester.pumpWidget(
         LocalizationTestApp(
-          child: BlocProvider<SignUpBloc>.value(
-            value: signUpBloc,
+          child: BlocProvider<AuthBloc>.value(
+            value: authBloc,
             child: Builder(builder: (context) {
               return Material(
                 child: BuildSignUpButton(
@@ -200,7 +199,7 @@ void main() {
       await tester.pumpAndSettle();
 
       verify(
-        () => signUpBloc.add(
+        () => authBloc.add(
           const SignUpRequest(
             dto: SignUpDTO(
               name: "Name",
@@ -223,8 +222,8 @@ void main() {
 
       await tester.pumpWidget(
         LocalizationTestApp(
-          child: BlocProvider<SignUpBloc>(
-            create: (context) => signUpBloc,
+          child: BlocProvider<AuthBloc>(
+            create: (context) => authBloc,
             child: Builder(builder: (context) {
               return Material(
                 child: BuildSignUpButton(
@@ -297,18 +296,18 @@ void main() {
 
     testWidgets('SignUp BlocListener Test', (WidgetTester tester) async {
       whenListen(
-        signUpBloc,
+        authBloc,
         Stream.fromIterable([
-          SignUpInitial(),
+          AuthInitial(),
           SignUpLoading(),
           SignUpSuccess(),
         ]),
-        initialState: SignUpInitial(),
+        initialState: AuthInitial(),
       );
 
       await tester.pumpWidget(
-        BlocProvider<SignUpBloc>.value(
-          value: signUpBloc,
+        BlocProvider<AuthBloc>.value(
+          value: authBloc,
           child: TestApp(
             routes: {
               '/': (_) => const MediaQuery(
@@ -327,7 +326,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      signUpBloc.add(
+      authBloc.add(
         const SignUpRequest(
           dto: SignUpDTO(
             email: "email",
@@ -343,18 +342,18 @@ void main() {
     testWidgets('SignUp BlocListener Test When Failed Occured',
         (WidgetTester tester) async {
       whenListen(
-        signUpBloc,
+        authBloc,
         Stream.fromIterable([
-          SignUpInitial(),
+          AuthInitial(),
           SignUpLoading(),
           const SignUpFailed(error: "Failed occured"),
         ]),
-        initialState: SignUpInitial(),
+        initialState: AuthInitial(),
       );
 
       await tester.pumpWidget(
-        BlocProvider<SignUpBloc>.value(
-          value: signUpBloc,
+        BlocProvider<AuthBloc>.value(
+          value: authBloc,
           child: TestApp(
             routes: {
               '/': (_) => const MediaQuery(
@@ -373,7 +372,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      signUpBloc.add(
+      authBloc.add(
         const SignUpRequest(
           dto: SignUpDTO(
             email: "email",

@@ -1,6 +1,7 @@
 import 'package:app/app.dart';
 import 'package:auth/auth.dart';
-import 'package:auth/bloc/sign_up/sign_up_bloc.dart';
+import 'package:auth/bloc/auth/auth_bloc.dart';
+import 'package:auth/data/enum/auth_type_enum.dart';
 import 'package:cwa_core/core.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +14,7 @@ class SignUpScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<SignUpBloc, SignUpState>(
+    return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is SignUpFailed) {
           context.loaderOverlay.hide();
@@ -47,7 +48,7 @@ class SignUpScreen extends StatelessWidget {
                   BuildHaveAccountButton(),
                   OrDividerWidget(),
                   OAuthSignInButton(
-                    bloc: SignUpBloc,
+                    type: AuthType.signUp,
                   ),
                 ],
               ),
@@ -197,7 +198,7 @@ class BuildSignUpButton extends StatelessWidget {
             password: passwordController.text,
           );
 
-          context.read<SignUpBloc>().add(
+          context.read<AuthBloc>().add(
                 SignUpRequest(
                   dto: dto,
                 ),

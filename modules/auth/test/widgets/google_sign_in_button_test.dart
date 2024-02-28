@@ -1,6 +1,7 @@
 import 'package:auth/auth.dart';
-import 'package:auth/bloc/sign_in/sign_in_bloc.dart';
-import 'package:auth/bloc/sign_up/sign_up_bloc.dart';
+import 'package:auth/bloc/auth/auth_bloc.dart';
+import 'package:auth/data/enum/auth_type_enum.dart';
+
 import 'package:bloc_test/bloc_test.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -25,31 +26,19 @@ class MockUser extends Mock implements User {
   MockUser({this.uid = 'id', this.displayName = 'name', this.email = 'email'});
 }
 
-class MockSignInBloc extends Mock implements SignInBloc {
+class MockAuthBloc extends Mock implements AuthBloc {
   @override
   final AuthService services;
   @override
   final UserService userService;
 
-  MockSignInBloc({required this.services, required this.userService}) {
-    when(() => close()).thenAnswer((_) async => {});
-  }
-}
-
-class MockSignUpBloc extends Mock implements SignUpBloc {
-  @override
-  final AuthService services;
-  @override
-  final UserService userService;
-
-  MockSignUpBloc({required this.services, required this.userService}) {
+  MockAuthBloc({required this.services, required this.userService}) {
     when(() => close()).thenAnswer((_) async => {});
   }
 }
 
 void main() {
-  late SignInBloc signInBloc;
-  late SignUpBloc signUpBloc;
+  late AuthBloc authBloc;
   late AuthService mockAuthService;
   late UserService mockUserService;
   late GetIt getIt;
@@ -73,18 +62,14 @@ void main() {
     mockAuthService = getIt<AuthService>();
     mockUserService = getIt<UserService>();
 
-    signInBloc = MockSignInBloc(
-      services: mockAuthService,
-      userService: mockUserService,
-    );
-    signUpBloc = MockSignUpBloc(
+    authBloc = MockAuthBloc(
       services: mockAuthService,
       userService: mockUserService,
     );
   });
 
   tearDown(() {
-    signInBloc.close();
+    authBloc.close();
     getIt.reset();
   });
 
@@ -94,6 +79,7 @@ void main() {
         const TestApp(
           home: Scaffold(
             body: GoogleSignInButton(
+              type: AuthType.signIn,
               padding: EdgeInsets.all(8.0),
               margin: EdgeInsets.all(16.0),
             ),
@@ -110,7 +96,9 @@ void main() {
       await tester.pumpWidget(
         const TestApp(
           home: Scaffold(
-            body: GoogleSignInButton(),
+            body: GoogleSignInButton(
+              type: AuthType.signIn,
+            ),
           ),
         ),
       );
@@ -126,6 +114,7 @@ void main() {
         const TestApp(
           home: Scaffold(
             body: GoogleSignInButton(
+              type: AuthType.signIn,
               padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 12.0),
               margin: EdgeInsets.all(20.0),
             ),
@@ -141,25 +130,25 @@ void main() {
     });
 
     testWidgets(
-        'Widget onTap callback is call Bloc Event Correctly SignIn Bloc',
+        'Widget onTap callback is call Bloc Event Correctly SignUp Bloc',
         (WidgetTester tester) async {
       whenListen(
-        signUpBloc,
+        authBloc,
         Stream.fromIterable([
-          SignUpInitial(),
+          AuthInitial(),
           SignUpLoading(),
           SignUpSuccess(),
         ]),
-        initialState: SignUpInitial(),
+        initialState: AuthInitial(),
       );
 
       await tester.pumpWidget(
         TestApp(
-          home: BlocProvider<SignUpBloc>(
-            create: (context) => signUpBloc,
+          home: BlocProvider<AuthBloc>(
+            create: (context) => authBloc,
             child: const Scaffold(
               body: GoogleSignInButton(
-                bloc: SignUpBloc,
+                type: AuthType.signUp,
               ),
             ),
           ),
@@ -174,32 +163,32 @@ void main() {
       await tester.pumpAndSettle();
 
       verify(
-        () => signUpBloc.add(SignUpByGoogleRequest()),
+        () => authBloc.add(SignUpByGoogleRequest()),
       ).called(1);
 
       await tester.pumpAndSettle();
     });
 
     testWidgets(
-        'Widget onTap callback is call Bloc Event Correctly SignUp Bloc',
+        'Widget onTap callback is call Bloc Event Correctly Sign In Bloc',
         (WidgetTester tester) async {
       whenListen(
-        signInBloc,
+        authBloc,
         Stream.fromIterable([
-          SignInInitial(),
+          AuthInitial(),
           SignInLoading(),
           SignInSuccess(),
         ]),
-        initialState: SignInInitial(),
+        initialState: AuthInitial(),
       );
 
       await tester.pumpWidget(
         TestApp(
-          home: BlocProvider<SignInBloc>(
-            create: (context) => signInBloc,
+          home: BlocProvider<AuthBloc>(
+            create: (context) => authBloc,
             child: const Scaffold(
               body: GoogleSignInButton(
-                bloc: SignInBloc,
+                type: AuthType.signIn,
               ),
             ),
           ),
@@ -214,7 +203,7 @@ void main() {
       await tester.pumpAndSettle();
 
       verify(
-        () => signInBloc.add(SignInByGoogleRequest()),
+        () => authBloc.add(SignInByGoogleRequest()),
       ).called(1);
 
       await tester.pumpAndSettle();

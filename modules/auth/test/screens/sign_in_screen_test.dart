@@ -1,7 +1,7 @@
 import 'package:app/presentation/widgets/custom_text_button.dart';
 import 'package:app/presentation/widgets/custom_textform_field.dart';
 import 'package:auth/auth.dart';
-import 'package:auth/bloc/sign_in/sign_in_bloc.dart';
+import 'package:auth/bloc/auth/auth_bloc.dart';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:cwa_core/test_helper/test.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -10,7 +10,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mocktail/mocktail.dart';
-
 
 enum NavigatorAction { push, pop, replaced }
 
@@ -45,7 +44,7 @@ class MockUser extends Mock implements User {
   MockUser({this.uid = 'id', this.displayName = 'name', this.email = 'email'});
 }
 
-class MockSignInBloc extends Mock implements SignInBloc {
+class MockSignInBloc extends Mock implements AuthBloc {
   @override
   final AuthService services;
   @override
@@ -57,7 +56,7 @@ class MockSignInBloc extends Mock implements SignInBloc {
 }
 
 void main() {
-  late SignInBloc signInBloc;
+  late AuthBloc authBloc;
   late AuthService mockAuthService;
   late UserService mockUserService;
   late GetIt getIt;
@@ -84,14 +83,14 @@ void main() {
     mockAuthService = getIt<AuthService>();
     mockUserService = getIt<UserService>();
 
-    signInBloc = MockSignInBloc(
+    authBloc = MockSignInBloc(
       services: mockAuthService,
       userService: mockUserService,
     );
   });
 
   tearDown(() {
-    signInBloc.close();
+    authBloc.close();
     getIt.reset();
   });
   group('SignInScreen Widgets Test', () {
@@ -147,19 +146,19 @@ void main() {
     testWidgets('BuildSignInForms Widget Test ForgotPassword Success',
         (WidgetTester tester) async {
       whenListen(
-        signInBloc,
+        authBloc,
         Stream.fromIterable([
-          SignInInitial(),
+          AuthInitial(),
           ForgotPasswordLoading(),
           ForgotPasswordSuccess(),
         ]),
-        initialState: SignInInitial(),
+        initialState: AuthInitial(),
       );
 
       await tester.pumpWidget(
         TestApp(
-          home: BlocProvider<SignInBloc>(
-            create: (context) => signInBloc,
+          home: BlocProvider<AuthBloc>(
+            create: (context) => authBloc,
             child: const Material(
               child: BuildSignInForms(),
             ),
@@ -178,7 +177,7 @@ void main() {
       await tester.tap(find.text('forgotPasswordText'), warnIfMissed: false);
 
       verify(
-        () => signInBloc.add(
+        () => authBloc.add(
           const ForgotPasswordRequest(email: 'email@domain.com'),
         ),
       ).called(1);
@@ -189,19 +188,19 @@ void main() {
     testWidgets('BuildSignInForms Widget Test ForgotPassword Failed',
         (WidgetTester tester) async {
       whenListen(
-        signInBloc,
+        authBloc,
         Stream.fromIterable([
-          SignInInitial(),
+          AuthInitial(),
           ForgotPasswordLoading(),
           const ForgotPasswordFailed(error: "Please emailHintText"),
         ]),
-        initialState: SignInInitial(),
+        initialState: AuthInitial(),
       );
 
       await tester.pumpWidget(
         TestApp(
           home: BlocProvider(
-            create: (context) => signInBloc,
+            create: (context) => authBloc,
             child: const Material(
               child: BuildSignInForms(),
             ),
@@ -218,19 +217,19 @@ void main() {
 
     testWidgets('BuildSignInButton Widget Test', (WidgetTester tester) async {
       whenListen(
-        signInBloc,
+        authBloc,
         Stream.fromIterable([
-          SignInInitial(),
+          AuthInitial(),
           SignInLoading(),
           SignInSuccess(),
         ]),
-        initialState: SignInInitial(),
+        initialState: AuthInitial(),
       );
 
       await tester.pumpWidget(
         LocalizationTestApp(
-          child: BlocProvider<SignInBloc>(
-            create: (context) => signInBloc,
+          child: BlocProvider<AuthBloc>(
+            create: (context) => authBloc,
             child: Builder(
               builder: (context) {
                 return Material(
@@ -255,7 +254,7 @@ void main() {
       await tester.tap(find.byType(InkWell), warnIfMissed: false);
 
       verify(
-        () => signInBloc.add(
+        () => authBloc.add(
           const SignInRequest(
             signInDTO:
                 SignInDTO(email: "email@domain.com", password: "password"),
@@ -267,17 +266,17 @@ void main() {
     testWidgets('BuildSignInButton Widget Test Empty Forms',
         (WidgetTester tester) async {
       whenListen(
-        signInBloc,
+        authBloc,
         Stream.fromIterable([
-          SignInInitial(),
+          AuthInitial(),
         ]),
-        initialState: SignInInitial(),
+        initialState: AuthInitial(),
       );
 
       await tester.pumpWidget(
         LocalizationTestApp(
-          child: BlocProvider<SignInBloc>(
-            create: (context) => signInBloc,
+          child: BlocProvider<AuthBloc>(
+            create: (context) => authBloc,
             child: Builder(
               builder: (context) {
                 return Material(
@@ -345,11 +344,11 @@ void main() {
 
     testWidgets('SignInScreen Widget Test', (WidgetTester tester) async {
       whenListen(
-        signInBloc,
+        authBloc,
         Stream.fromIterable([
-          SignInInitial(),
+          AuthInitial(),
         ]),
-        initialState: SignInInitial(),
+        initialState: AuthInitial(),
       );
 
       await tester.pumpWidget(
@@ -357,8 +356,8 @@ void main() {
           home: Material(
             child: MediaQuery(
               data: const MediaQueryData(textScaler: TextScaler.linear(0.5)),
-              child: BlocProvider<SignInBloc>.value(
-                value: signInBloc,
+              child: BlocProvider<AuthBloc>.value(
+                value: authBloc,
                 child: SignInScreen(),
               ),
             ),
@@ -371,18 +370,18 @@ void main() {
 
     testWidgets('SignInBlocListener Test', (WidgetTester tester) async {
       whenListen(
-        signInBloc,
+        authBloc,
         Stream.fromIterable([
-          SignInInitial(),
+          AuthInitial(),
           SignInLoading(),
           SignInSuccess(),
         ]),
-        initialState: SignInInitial(),
+        initialState: AuthInitial(),
       );
 
       await tester.pumpWidget(
-        BlocProvider<SignInBloc>(
-          create: (context) => signInBloc,
+        BlocProvider<AuthBloc>(
+          create: (context) => authBloc,
           child: TestApp(
             routes: {
               '/': (_) => MediaQuery(
@@ -402,7 +401,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      signInBloc.add(
+      authBloc.add(
         const SignInRequest(
           signInDTO: SignInDTO(
             email: "email",
@@ -415,18 +414,18 @@ void main() {
     testWidgets('SignInBlocListener Test Failed Test',
         (WidgetTester tester) async {
       whenListen(
-        signInBloc,
+        authBloc,
         Stream.fromIterable([
-          SignInInitial(),
+          AuthInitial(),
           SignInLoading(),
           const SignInFailed(error: "Failed to Sign In"),
         ]),
-        initialState: SignInInitial(),
+        initialState: AuthInitial(),
       );
 
       await tester.pumpWidget(
-        BlocProvider<SignInBloc>(
-          create: (context) => signInBloc,
+        BlocProvider<AuthBloc>(
+          create: (context) => authBloc,
           child: TestApp(
             routes: {
               '/': (_) => MediaQuery(
@@ -446,7 +445,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      signInBloc.add(
+      authBloc.add(
         const SignInRequest(
           signInDTO: SignInDTO(
             email: "email",
@@ -463,18 +462,15 @@ void main() {
     testWidgets('SignInBlocListener Test Failed Forgot Success',
         (WidgetTester tester) async {
       whenListen(
-        signInBloc,
-        Stream.fromIterable([
-          SignInInitial(),
-          ForgotPasswordLoading(),
-          ForgotPasswordSuccess()
-        ]),
-        initialState: SignInInitial(),
+        authBloc,
+        Stream.fromIterable(
+            [AuthInitial(), ForgotPasswordLoading(), ForgotPasswordSuccess()]),
+        initialState: AuthInitial(),
       );
 
       await tester.pumpWidget(
-        BlocProvider<SignInBloc>(
-          create: (context) => signInBloc,
+        BlocProvider<AuthBloc>(
+          create: (context) => authBloc,
           child: TestApp(
             routes: {
               '/': (_) => MediaQuery(
@@ -494,7 +490,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      signInBloc.add(
+      authBloc.add(
         const ForgotPasswordRequest(
           email: "email",
         ),
@@ -508,18 +504,18 @@ void main() {
     testWidgets('SignInBlocListener Test Failed Forgot Password',
         (WidgetTester tester) async {
       whenListen(
-        signInBloc,
+        authBloc,
         Stream.fromIterable([
-          SignInInitial(),
+          AuthInitial(),
           ForgotPasswordLoading(),
           const ForgotPasswordFailed(error: "Failed to Send Email"),
         ]),
-        initialState: SignInInitial(),
+        initialState: AuthInitial(),
       );
 
       await tester.pumpWidget(
-        BlocProvider<SignInBloc>(
-          create: (context) => signInBloc,
+        BlocProvider<AuthBloc>(
+          create: (context) => authBloc,
           child: TestApp(
             routes: {
               '/': (_) => MediaQuery(
@@ -539,7 +535,7 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      signInBloc.add(
+      authBloc.add(
         const ForgotPasswordRequest(
           email: "email",
         ),
