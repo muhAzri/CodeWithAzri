@@ -7,6 +7,7 @@ class AssetsManager {
   static String onboard = '$_baseImagePath/onboard.png';
   static String loginGoogle = '$_baseImagePath/login_google.png';
   static String loginApple = '$_baseImagePath/login_apple.png';
+  static String dummyCourseImage = '$_baseImagePath/dummy_course_image.png';
 
   // Icons Related
   static String emailIcon = '$_baseIconsPath/email.png';

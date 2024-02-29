@@ -11,7 +11,14 @@ void main() {
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
 
       await tester.pumpWidget(
-          const TestApp(home: Material(child: OAuthSignInButton())));
+        const TestApp(
+          home: Material(
+            child: OAuthSignInButton(
+              type: AuthType.signIn,
+            ),
+          ),
+        ),
+      );
       expect(find.byType(AppleSignInButton), findsOneWidget);
       expect(find.byType(GoogleSignInButton), findsNothing);
 
@@ -23,7 +30,14 @@ void main() {
       debugDefaultTargetPlatformOverride = TargetPlatform.android;
 
       await tester.pumpWidget(
-          const TestApp(home: Material(child: OAuthSignInButton())));
+        const TestApp(
+          home: Material(
+            child: OAuthSignInButton(
+              type: AuthType.signIn,
+            ),
+          ),
+        ),
+      );
       expect(find.byType(GoogleSignInButton), findsOneWidget);
       expect(find.byType(AppleSignInButton), findsNothing);
 

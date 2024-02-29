@@ -19,5 +19,7 @@
     "navBarItemHome": "Beranda",
     "navBarItemSearch": "Cari",
     "navBarItemMyCourse": "Kursus Saya",
-    "navBarItemProfile": "Profil"
+    "navBarItemProfile": "Profil",
+    "searchBarPlaceholderText": "Cari berdasarkan keahlian atau techstacks",
+    "homeContinueLearningText": "Lanjutkan Belajar"
 }

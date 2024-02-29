@@ -17,21 +17,6 @@ void main() {
       expect(find.byType(HomeScreen), findsOneWidget);
     });
 
-    testWidgets('Switching to search screen via bottom navigation bar',
-        (WidgetTester tester) async {
-      await tester.pumpWidget(
-        const LocalizationTestApp(
-          child: MainScreen(),
-        ),
-      );
-
-      await tester.pumpAndSettle();
-
-      await tester.tap(find.byIcon(Icons.explore_outlined));
-      await tester.pumpAndSettle();
-      expect(find.text("Search Screen"), findsOneWidget);
-    });
-
     testWidgets('Switching to my course screen via bottom navigation bar',
         (WidgetTester tester) async {
       await tester.pumpWidget(

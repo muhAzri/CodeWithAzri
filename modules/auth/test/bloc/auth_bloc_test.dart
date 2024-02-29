@@ -1,5 +1,6 @@
-import 'package:auth/bloc/sign_in/sign_in_bloc.dart';
+import 'package:auth/bloc/auth/auth_bloc.dart';
 import 'package:auth/data/dto/auth/sign_in_dto.dart';
+import 'package:auth/data/dto/auth/sign_up_dto.dart';
 import 'package:auth/data/dto/user/user_initialization_dto.dart';
 import 'package:auth/data/remote/auth_services.dart';
 import 'package:auth/data/remote/user_services.dart';
@@ -32,7 +33,7 @@ class MockUser extends Mock implements User {
 }
 
 void main() {
-  late SignInBloc signInBloc;
+  late AuthBloc authBloc;
   late AuthService mockAuthService;
   late UserService mockUserService;
   late GetIt getIt;
@@ -40,6 +41,9 @@ void main() {
   setUpAll(() {
     registerFallbackValue(
       const SignInDTO(email: "email", password: "password"),
+    );
+    registerFallbackValue(
+      const SignUpDTO(name: "name", email: "email", password: "password"),
     );
     registerFallbackValue(
       const UserInitializationDTO(
@@ -58,18 +62,18 @@ void main() {
     mockAuthService = getIt<AuthService>();
     mockUserService = getIt<UserService>();
 
-    signInBloc = SignInBloc(
+    authBloc = AuthBloc(
       services: mockAuthService,
       userService: mockUserService,
     );
   });
 
   tearDown(() {
-    signInBloc.close();
+    authBloc.close();
     getIt.reset();
   });
 
-  group("Sign In Bloc Test", () {
+  group("Auth Bloc Test Group (Sign In)", () {
     SignInDTO signInDTO = const SignInDTO(
       email: "email",
       password: "password",
@@ -92,7 +96,7 @@ void main() {
       expect(event1, isNot(equals(event2)));
     });
 
-    blocTest(
+    blocTest<AuthBloc, AuthState>(
       "emits [SignInLoading, SignInSuccess] when SignInRequest is added successfully",
       build: () {
         when(() => mockAuthService.signInWithEmailAndPassword(any()))
@@ -100,7 +104,7 @@ void main() {
           (_) async => MockUser(),
         );
 
-        return signInBloc;
+        return authBloc;
       },
       act: (bloc) => bloc.add(SignInRequest(signInDTO: signInDTO)),
       expect: () => [
@@ -109,26 +113,26 @@ void main() {
       ],
     );
 
-    blocTest(
+    blocTest<AuthBloc, AuthState>(
       "emits [SignInLoading, SignInFailed] when signInService throws an exception",
       build: () {
         when(() => mockAuthService.signInWithEmailAndPassword(any())).thenThrow(
-          FirebaseException(
-            plugin: "FirebaseAuthException",
+          FirebaseAuthException(
             message: "Failed To Sign In",
+            code: '401',
           ),
         );
 
-        return signInBloc;
+        return authBloc;
       },
       act: (bloc) => bloc.add(SignInRequest(signInDTO: signInDTO)),
       expect: () => [
         SignInLoading(),
-        const SignInFailed(error: "Failed To Sign In"),
+        const SignInFailed(error: "[firebase_auth/401] Failed To Sign In"),
       ],
     );
 
-    blocTest(
+    blocTest<AuthBloc, AuthState>(
       "emits [SignInLoading, SignInSuccess] when SignInByGoogleRequest is added successfully",
       build: () {
         when(() => mockAuthService.signInWithGoogle()).thenAnswer(
@@ -137,7 +141,7 @@ void main() {
         when(() => mockUserService.initializeUser(any()))
             .thenAnswer((_) async {});
 
-        return signInBloc;
+        return authBloc;
       },
       act: (bloc) => bloc.add(SignInByGoogleRequest()),
       expect: () => [
@@ -146,29 +150,29 @@ void main() {
       ],
     );
 
-    blocTest(
+    blocTest<AuthBloc, AuthState>(
       "emits [SignInLoading, SignInSuccess] when SignInByGoogleRequest throws an exception",
       build: () {
         when(() => mockAuthService.signInWithGoogle()).thenThrow(
-          FirebaseException(
-            plugin: "FirebaseAuthException",
+          FirebaseAuthException(
             message: "Failed To Sign In",
+            code: '401',
           ),
         );
         when(() => mockUserService.initializeUser(any())).thenAnswer((_) async {
           return;
         });
 
-        return signInBloc;
+        return authBloc;
       },
       act: (bloc) => bloc.add(SignInByGoogleRequest()),
       expect: () => [
         SignInLoading(),
-        const SignInFailed(error: "Failed To Sign In"),
+        const SignInFailed(error: "[firebase_auth/401] Failed To Sign In"),
       ],
     );
 
-    blocTest(
+    blocTest<AuthBloc, AuthState>(
       "emits [SignInLoading, SignInSuccess] when SignInByGoogleRequest userinitialization throws an exception",
       build: () {
         when(() => mockAuthService.signInWithGoogle()).thenAnswer(
@@ -177,7 +181,7 @@ void main() {
         when(() => mockUserService.initializeUser(any()))
             .thenThrow("Internal Server Error");
 
-        return signInBloc;
+        return authBloc;
       },
       act: (bloc) => bloc.add(SignInByGoogleRequest()),
       expect: () => [
@@ -186,7 +190,7 @@ void main() {
       ],
     );
 
-    blocTest(
+    blocTest<AuthBloc, AuthState>(
       "emits [ForgotPasswordLoading,ForgotPasswordSuccess] when ForgotPasswordRequest is added successfully",
       build: () {
         when(() => mockAuthService.sendPasswordResetEmail(any()))
@@ -194,7 +198,7 @@ void main() {
           return;
         });
 
-        return signInBloc;
+        return authBloc;
       },
       act: (bloc) => bloc.add(const ForgotPasswordRequest(email: "email")),
       expect: () => [
@@ -203,24 +207,156 @@ void main() {
       ],
     );
 
-    blocTest(
+    blocTest<AuthBloc, AuthState>(
       "emits [ForgotPasswordLoading,ForgotPasswordFailed] when ForgotPasswordRequest is failed",
       build: () {
         when(() => mockAuthService.sendPasswordResetEmail(any())).thenThrow(
-          FirebaseException(
-            plugin: "FirebaseAuthException",
+          FirebaseAuthException(
+            code: "401",
             message: "Failed To Send Reset Password Email",
           ),
         );
 
-        return signInBloc;
+        return authBloc;
       },
       act: (bloc) => bloc.add(const ForgotPasswordRequest(email: "email")),
       expect: () => [
         ForgotPasswordLoading(),
         const ForgotPasswordFailed(
-          error: "Failed To Send Reset Password Email",
+          error: "[firebase_auth/401] Failed To Send Reset Password Email",
         ),
+      ],
+    );
+  });
+
+  group("Auth Bloc Test Group (Sign Up)", () {
+    SignUpDTO signUpDTO =
+        const SignUpDTO(name: "name", email: "email", password: "password");
+
+    test("SignUpEvent instances with same type are equal", () {
+      const event1 = SignUpRequest(
+          dto: SignUpDTO(name: "name", email: "email", password: "password"));
+      const event2 = SignUpRequest(
+          dto: SignUpDTO(name: "name", email: "email", password: "password"));
+
+      expect(event1, equals(event2));
+    });
+
+    test("SignUpEvent instances with same type are not equal", () {
+      const event1 = SignUpRequest(
+          dto: SignUpDTO(name: "name", email: "email", password: "password"));
+      final event2 = SignUpByGoogleRequest();
+
+      expect(event1, isNot(equals(event2)));
+    });
+
+    blocTest<AuthBloc, AuthState>(
+      "emits [SignUpLoading, SignUpSuccess] when SignUpRequest is added successfully",
+      build: () {
+        when(() => mockAuthService.signUp(any()))
+            .thenAnswer((_) async => MockUser());
+        when(() => mockUserService.initializeUser(any())).thenAnswer((_) async {
+          return;
+        });
+        return authBloc;
+      },
+      act: (bloc) => bloc.add(SignUpRequest(dto: signUpDTO)),
+      expect: () => [
+        SignUpLoading(),
+        SignUpSuccess(),
+      ],
+    );
+
+    blocTest<AuthBloc, AuthState>(
+      "emits [SignUpLoading, SignUpFailed] when signupService throws an exception",
+      build: () {
+        when(() => mockAuthService.signUp(any())).thenThrow(
+          FirebaseAuthException(
+            code: "401",
+            message: "Failed To Sign Up",
+          ),
+        );
+        when(() => mockUserService.initializeUser(any())).thenAnswer((_) async {
+          return;
+        });
+        return authBloc;
+      },
+      act: (bloc) => bloc.add(SignUpRequest(dto: signUpDTO)),
+      expect: () => [
+        SignUpLoading(),
+        const SignUpFailed(
+          error: "[firebase_auth/401] Failed To Sign Up",
+        ),
+      ],
+    );
+
+    blocTest<AuthBloc, AuthState>(
+      "emits [SignUpLoading, SignUpFailed] when Initialize User Service throws an exception",
+      build: () {
+        when(() => mockAuthService.signUp(any()))
+            .thenAnswer((_) async => MockUser());
+        when(() => mockUserService.initializeUser(any()))
+            .thenThrow("Internal Server Error");
+        return authBloc;
+      },
+      act: (bloc) => bloc.add(SignUpRequest(dto: signUpDTO)),
+      expect: () => [
+        SignUpLoading(),
+        const SignUpFailed(error: "Internal Server Error"),
+      ],
+    );
+
+    blocTest<AuthBloc, AuthState>(
+      "emits [SignUpLoading, SignUpSuccess] when SignUpByGoogleRequest is added successfully",
+      build: () {
+        when(() => mockAuthService.signInWithGoogle())
+            .thenAnswer((_) async => MockUser());
+        when(() => mockUserService.initializeUser(any())).thenAnswer((_) async {
+          return;
+        });
+        return authBloc;
+      },
+      act: (bloc) => bloc.add(SignUpByGoogleRequest()),
+      expect: () => [
+        SignUpLoading(),
+        SignUpSuccess(),
+      ],
+    );
+
+    blocTest<AuthBloc, AuthState>(
+      "emits [SignUpLoading, SignUpFailed] when signInWithGoogle is Throw Error",
+      build: () {
+        when(() => mockAuthService.signInWithGoogle()).thenThrow(
+          FirebaseAuthException(
+            code: "401",
+            message: "Failed To Sign Up",
+          ),
+        );
+        when(() => mockUserService.initializeUser(any())).thenAnswer((_) async {
+          return;
+        });
+        return authBloc;
+      },
+      act: (bloc) => bloc.add(SignUpByGoogleRequest()),
+      expect: () => [
+        SignUpLoading(),
+        const SignUpFailed(error: "[firebase_auth/401] Failed To Sign Up"),
+      ],
+    );
+
+    blocTest<AuthBloc, AuthState>(
+      "emits [SignUpLoading, SignUpFailed] SignUpWithGoogle when Initialize User Service is Throw Error",
+      build: () {
+        when(() => mockAuthService.signInWithGoogle())
+            .thenAnswer((_) async => MockUser());
+        when(() => mockUserService.initializeUser(any()))
+            .thenThrow("Internal Server Error");
+        return authBloc;
+      },
+      act: (bloc) => bloc.add(SignUpByGoogleRequest()),
+      expect: () => [
+        SignUpLoading(),
+        const SignUpFailed(error: "Internal Server Error"),
       ],
     );
   });

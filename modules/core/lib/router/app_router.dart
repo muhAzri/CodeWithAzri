@@ -1,10 +1,9 @@
 import 'package:app/app.dart';
-import 'package:auth/bloc/sign_in/sign_in_bloc.dart';
-import 'package:auth/bloc/sign_up/sign_up_bloc.dart';
+import 'package:auth/bloc/auth/auth_bloc.dart';
+
 import 'package:auth/presentation/screens/sign_in_screen.dart';
 import 'package:auth/presentation/screens/sign_up_screen.dart';
 import 'package:cwa_core/core.dart';
-
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -27,13 +26,13 @@ class AppRouter {
 
               case AppRoutes.signUpScreen:
                 return BlocProvider(
-                  create: (context) => locator.getIt<SignUpBloc>(),
+                  create: (context) => locator.getIt<AuthBloc>(),
                   child: const SignUpScreen(),
                 );
 
               case AppRoutes.signInScreen:
                 return BlocProvider(
-                  create: (context) => locator.getIt<SignInBloc>(),
+                  create: (context) => locator.getIt<AuthBloc>(),
                   child: SignInScreen(),
                 );
 

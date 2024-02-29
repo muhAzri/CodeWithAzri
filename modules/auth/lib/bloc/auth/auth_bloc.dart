@@ -1,25 +1,66 @@
-import 'package:auth/data/dto/auth/sign_in_dto.dart';
-import 'package:auth/data/dto/user/user_initialization_dto.dart';
-import 'package:auth/data/remote/auth_services.dart';
-import 'package:auth/data/remote/user_services.dart';
+import 'package:auth/auth.dart';
+import 'package:cwa_core/core.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 
+part 'auth_event.dart';
+part 'auth_state.dart';
 
-part 'sign_in_event.dart';
-part 'sign_in_state.dart';
-
-class SignInBloc extends Bloc<SignInEvent, SignInState> {
+class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthService services;
   final UserService userService;
-
-  SignInBloc({
+  AuthBloc({
     required this.services,
     required this.userService,
-  }) : super(SignInInitial()) {
+  }) : super(AuthInitial()) {
+    //  Sign Up Events
+    on<SignUpRequest>(onSignUp);
+    on<SignUpByGoogleRequest>(onSignUpByGoogle);
+    //  Sign In Events
     on<SignInRequest>(onSignIn);
     on<ForgotPasswordRequest>(onForgotPassword);
     on<SignInByGoogleRequest>(onSignInByGoogle);
+  }
+
+  Future<void> onSignUp(SignUpRequest event, emit) async {
+    try {
+      emit(SignUpLoading());
+
+      final user = await services.signUp(event.dto);
+      await userService.initializeUser(UserInitializationDTO(
+        id: user.uid,
+        name: event.dto.name,
+        email: event.dto.email,
+        profilePicture: user.photoURL ?? getAvatarUrl(event.dto.name),
+      ));
+
+      emit(SignUpSuccess());
+    } catch (e) {
+      emit(SignUpFailed(error: e.toString()));
+    }
+  }
+
+  Future<void> onSignUpByGoogle(SignUpByGoogleRequest event, emit) async {
+    try {
+      emit(SignUpLoading());
+
+      final user = await services.signInWithGoogle();
+      await userService.initializeUser(UserInitializationDTO(
+        id: user.uid,
+        name: user.displayName!,
+        email: user.email!,
+        profilePicture: user.photoURL!,
+      ));
+
+      emit(SignUpSuccess());
+    } catch (e) {
+      emit(
+        SignUpFailed(
+          error: e.toString(),
+        ),
+      );
+    }
   }
 
   Future<void> onSignIn(SignInRequest event, emit) async {

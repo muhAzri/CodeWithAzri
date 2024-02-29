@@ -19,5 +19,7 @@
     "navBarItemHome": "Home",
     "navBarItemSearch": "Search",
     "navBarItemMyCourse": "MyCourse",
-    "navBarItemProfile": "Profile"
+    "navBarItemProfile": "Profile",
+    "searchBarPlaceholderText": "Search by skills or tech stacks",
+    "homeContinueLearningText": "Continue Learning"
 }

@@ -1,6 +1,5 @@
 import 'package:app/app.dart';
 import 'package:auth/auth.dart';
-import 'package:auth/bloc/sign_in/sign_in_bloc.dart';
 import 'package:cwa_core/core.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +15,7 @@ class SignInScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<SignInBloc, SignInState>(
+    return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is SignInFailed) {
           context.loaderOverlay.hide();
@@ -62,7 +61,7 @@ class SignInScreen extends StatelessWidget {
                   BuildCreateAccountButton(),
                   OrDividerWidget(),
                   OAuthSignInButton(
-                    bloc: SignInBloc,
+                    type: AuthType.signIn,
                   ),
                 ],
               ),
@@ -168,7 +167,7 @@ class BuildSignInFormsState extends State<BuildSignInForms> {
             onTap: () {
               if (emailController.text.isNotEmpty) {
                 context
-                    .read<SignInBloc>()
+                    .read<AuthBloc>()
                     .add(ForgotPasswordRequest(email: emailController.text));
               } else {
                 FlushbarUtils.showFlushbar(
@@ -205,7 +204,7 @@ class BuildSignInButton extends StatelessWidget {
         onTap: () {
           if (emailController.text.isNotEmpty &&
               passwordController.text.isNotEmpty) {
-            context.read<SignInBloc>().add(SignInRequest(
+            context.read<AuthBloc>().add(SignInRequest(
                 signInDTO: SignInDTO(
                     email: emailController.text,
                     password: passwordController.text)));
