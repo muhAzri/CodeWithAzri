@@ -1,5 +1,4 @@
 import 'package:auth/auth.dart';
-import 'package:auth/data/enum/auth_type_enum.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

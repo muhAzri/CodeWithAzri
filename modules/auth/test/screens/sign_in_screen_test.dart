@@ -1,7 +1,6 @@
 import 'package:app/presentation/widgets/custom_text_button.dart';
 import 'package:app/presentation/widgets/custom_textform_field.dart';
 import 'package:auth/auth.dart';
-import 'package:auth/bloc/auth/auth_bloc.dart';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:cwa_core/test_helper/test.dart';
 import 'package:firebase_auth/firebase_auth.dart';

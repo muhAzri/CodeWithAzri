@@ -1,6 +1,4 @@
 import 'package:auth/auth.dart';
-import 'package:auth/bloc/auth/auth_bloc.dart';
-import 'package:auth/data/enum/auth_type_enum.dart';
 
 import 'package:bloc_test/bloc_test.dart';
 import 'package:firebase_auth/firebase_auth.dart';
